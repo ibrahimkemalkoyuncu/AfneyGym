@@ -5,84 +5,142 @@
 }
 
 <style>
-    .stat-card {
-        background: #111;
-        border: 1px solid #222;
-        border-radius: 15px;
-        padding: 25px;
-        transition: 0.3s;
-        border-left: 5px solid #e31e24;
-    }
+    /* İstatistik Kartları */
+    .stat-card { background: #111; border: 1px solid #222; border-radius: 15px; padding: 25px; transition: 0.3s; border-left: 5px solid #e31e24; }
     .stat-card:hover { transform: translateY(-5px); border-color: #e31e24; }
-    .stat-icon { font-size: 2.5rem; color: #333; }
-    .stat-value { font-size: 2rem; font-weight: 800; color: #fff; }
-    .stat-label { color: #aaa; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px; }
+    .stat-value { font-size: 2.2rem; font-weight: 800; color: #fff; line-height: 1; margin-bottom: 5px; }
+    .stat-label { color: #aaa; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 1px; font-weight: 600; }
+    
+    /* Tablo Kartları */
+    .dashboard-table-card { background: #111; border: 1px solid #222; border-radius: 15px; overflow: hidden; height: 100%; border-top: 1px solid #333; }
+    .table-header { padding: 20px; border-bottom: 1px solid #222; background: #161616; display: flex; justify-content: space-between; align-items: center; }
+    .table-dark { --bs-table-bg: transparent; }
+    .table thead th { border-bottom: 1px solid #222; color: #555; font-weight: 700; }
+    .table td { border-bottom: 1px solid #1a1a1a; vertical-align: middle; padding: 15px 10px; }
+    
+    /* Doluluk Badge */
+    .occupancy-badge { font-size: 0.7rem; padding: 5px 10px; border-radius: 6px; font-weight: 700; }
 </style>
 
 <div class="container-fluid">
-    <div class="mb-4">
-        <h2 class="fw-bold text-uppercase">SİSTEM <span class="text-danger">ÖZETİ</span></h2>
-        <p class="text-white-50">Salonunuzdaki anlık veriler ve operasyonel istatistikler.</p>
+    <div class="mb-4 d-flex justify-content-between align-items-end">
+        <div>
+            <h2 class="fw-bold text-uppercase m-0">SİSTEM <span class="text-danger">ÖZETİ</span></h2>
+            <p class="text-white-50 m-0 small">Veritabanından çekilen gerçek zamanlı operasyonel veriler.</p>
+        </div>
+        <div class="text-white-50 small">
+            <i class="bi bi-clock-history me-1"></i> Son Güncelleme: @DateTime.Now.ToString("HH:mm")
+        </div>
     </div>
 
-    <div class="row g-4">
-        @* TOPLAM ÜYE *@
+    @* --- İSTATİSTİK KARTLARI --- *@
+    <div class="row g-4 mb-5">
         <div class="col-md-3">
             <div class="stat-card shadow-sm">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <div class="stat-label">Toplam Üye</div>
-                        <div class="stat-value">@Model.TotalMembers</div>
-                    </div>
-                    <div class="stat-icon"><i class="bi bi-people"></i></div>
-                </div>
+                <div class="stat-label">Toplam Üye</div>
+                <div class="stat-value">@Model.TotalMembers</div>
+                <div class="small text-white-50"><i class="bi bi-person-check me-1"></i> Sadece Üye Rolü</div>
             </div>
         </div>
-
-        @* AKTİF ABONELİK *@
         <div class="col-md-3">
             <div class="stat-card shadow-sm" style="border-left-color: #198754;">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <div class="stat-label">Aktif Abonelik</div>
-                        <div class="stat-value">@Model.ActiveSubscriptions</div>
-                    </div>
-                    <div class="stat-icon text-success"><i class="bi bi-check-circle"></i></div>
-                </div>
+                <div class="stat-label">Aktif Abonelik</div>
+                <div class="stat-value">@Model.ActiveSubscriptions</div>
+                <div class="small text-white-50"><i class="bi bi-credit-card me-1"></i> Süresi Dolmamış</div>
             </div>
         </div>
-
-        @* EĞİTMEN KADROSU *@
         <div class="col-md-3">
             <div class="stat-card shadow-sm" style="border-left-color: #0dcaf0;">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <div class="stat-label">Eğitmenler</div>
-                        <div class="stat-value">@Model.TotalTrainers</div>
-                    </div>
-                    <div class="stat-icon text-info"><i class="bi bi-person-badge"></i></div>
-                </div>
+                <div class="stat-label">Eğitmenler</div>
+                <div class="stat-value">@Model.TotalTrainers</div>
+                <div class="small text-white-50"><i class="bi bi-award me-1"></i> Aktif Kadro</div>
             </div>
         </div>
-
-        @* BUGÜNKÜ DERSLER *@
         <div class="col-md-3">
             <div class="stat-card shadow-sm" style="border-left-color: #ffc107;">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <div class="stat-label">Bugünkü Dersler</div>
-                        <div class="stat-value">@Model.TodayLessonsCount</div>
-                    </div>
-                    <div class="stat-icon text-warning"><i class="bi bi-calendar-check"></i></div>
-                </div>
+                <div class="stat-label">Bugünkü Dersler</div>
+                <div class="stat-value">@Model.TodayLessonsCount</div>
+                <div class="small text-white-50"><i class="bi bi-calendar-event me-1"></i> @DateTime.Today.ToString("dd MMMM")</div>
             </div>
         </div>
     </div>
 
-    @* GELECEK ADIM: Buraya "Son Kayıt Olanlar" tablosu eklenecek *@
-</div>
+    @* --- TABLO BÖLÜMÜ --- *@
+    <div class="row g-4">
+        @* SOL: Son 5 Kayıt *@
+        <div class="col-lg-5">
+            <div class="dashboard-table-card shadow">
+                <div class="table-header">
+                    <h6 class="m-0 fw-bold text-white"><i class="bi bi-person-plus me-2 text-danger"></i>YENİ ÜYELER</h6>
+                    <a asp-action="Members" class="btn btn-dark btn-sm border-secondary fw-bold small">TÜMÜ</a>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-dark table-hover mb-0">
+                        <thead>
+                            <tr class="small">
+                                <th class="ps-4">AD SOYAD / E-POSTA</th>
+                                <th class="text-end pe-4">TARİH</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var member in Model.RecentMembers)
+                            {
+                                <tr>
+                                    <td class="ps-4">
+                                        <div class="text-white fw-bold">@member.FullName</div>
+                                        <div class="small text-white-50">@member.Email</div>
+                                    </td>
+                                    <td class="text-end pe-4 small text-white-50">@member.CreatedAt.ToString("dd.MM.yyyy")</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
 
-@* AÇIKLAMA: 
-   - InvalidOperationException hatası @model DashboardSummaryDto tanımıyla çözüldü.
-   - Dictionary yapısından DTO yapısına tam geçiş sağlandı.
-*@
+        @* SAĞ: Günlük Akış *@
+        <div class="col-lg-7">
+            <div class="dashboard-table-card shadow">
+                <div class="table-header">
+                    <h6 class="m-0 fw-bold text-white"><i class="bi bi-lightning-charge me-2 text-warning"></i>BUGÜNÜN AKIŞI</h6>
+                    <a asp-action="Lessons" class="btn btn-dark btn-sm border-secondary fw-bold small">YÖNET</a>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-dark table-hover mb-0">
+                        <thead>
+                            <tr class="small">
+                                <th class="ps-4">DERS / EĞİTMEN</th>
+                                <th>SAAT</th>
+                                <th class="text-end pe-4">DOLULUK</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (!Model.TodaysLessons.Any())
+                            {
+                                <tr>
+                                    <td colspan="3" class="text-center py-4 text-white-50 small italic">Bugün için planlanmış bir antrenman bulunmuyor.</td>
+                                </tr>
+                            }
+                            @foreach (var lesson in Model.TodaysLessons)
+                            {
+                                <tr>
+                                    <td class="ps-4">
+                                        <div class="text-white fw-bold">@lesson.Name</div>
+                                        <div class="small text-white-50">@lesson.TrainerName</div>
+                                    </td>
+                                    <td class="small fw-bold">@lesson.StartTime.ToString("HH:mm")</td>
+                                    <td class="text-end pe-4">
+                                        <span class="occupancy-badge @(lesson.AttendeeCount >= lesson.Capacity ? "bg-secondary" : "bg-danger")">
+                                            @lesson.AttendeeCount / @lesson.Capacity
+                                        </span>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

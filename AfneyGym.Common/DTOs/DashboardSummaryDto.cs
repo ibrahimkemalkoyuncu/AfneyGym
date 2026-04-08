@@ -2,18 +2,29 @@
 
 public class DashboardSummaryDto
 {
-    // Üye sayısı (Users tablosundan)
     public int TotalMembers { get; set; }
-
-    // Aktif abonelik sayısı (Subscriptions tablosundan)
     public int ActiveSubscriptions { get; set; }
-
-    // Kayıtlı eğitmen sayısı (Trainers tablosundan)
     public int TotalTrainers { get; set; }
-
-    // Sadece bugüne ait ders sayısı (Lessons tablosundan)
     public int TodayLessonsCount { get; set; }
+
+    // Entity yerine DTO listeleri kullanılarak CS0246 hataları çözüldü
+    public List<RecentMemberDto> RecentMembers { get; set; } = new();
+    public List<TodaysLessonDto> TodaysLessons { get; set; } = new();
 }
-/* MÜHENDİSLİK NOTU: 
-   Bu sınıfın 'Common' katmanında olması, hem 'Service' hem de 'WebMvc' 
-   katmanlarının bu veri yapısını tanımasını sağlar. */
+
+// Tablolar için hafif veri yapıları
+public class RecentMemberDto
+{
+    public string FullName { get; set; } = string.Empty;
+    public string Email { get; set; } = string.Empty;
+    public DateTime CreatedAt { get; set; }
+}
+
+public class TodaysLessonDto
+{
+    public string Name { get; set; } = string.Empty;
+    public string TrainerName { get; set; } = string.Empty;
+    public DateTime StartTime { get; set; }
+    public int AttendeeCount { get; set; }
+    public int Capacity { get; set; }
+}
