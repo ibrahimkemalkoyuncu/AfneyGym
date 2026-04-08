@@ -1,4 +1,5 @@
 ﻿using AfneyGym.Common.DTOs;
+using AfneyGym.Common.Enums;
 using AfneyGym.Data.Context;
 using AfneyGym.Domain.Entities;
 using AfneyGym.Domain.Interfaces;

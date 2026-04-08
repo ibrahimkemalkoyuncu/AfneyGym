@@ -1,53 +1,114 @@
-﻿@model List<User>
+﻿@using AfneyGym.Common.Enums
+@using AfneyGym.Domain.Entities
+@model List<User>
 @{
     ViewData["Title"] = "Kullanıcı Yönetimi";
 }
 
+<style>
+    .member-table-card { background: #111; border: 1px solid #222; border-radius: 15px; overflow: hidden; }
+    .table thead th { background: #1a1a1a; color: #555; text-transform: uppercase; font-size: 0.75rem; padding: 15px; border-bottom: 1px solid #333; }
+    .table td { vertical-align: middle; border-bottom: 1px solid #222; padding: 15px; color: #fff; }
+    .role-badge { font-size: 0.7rem; padding: 4px 10px; border-radius: 6px; font-weight: 700; }
+    .btn-action { width: 32px; height: 32px; padding: 0; display: inline-flex; align-items: center; justify-content: center; border-radius: 6px; transition: 0.2s; }
+</style>
+
 <div class="container-fluid">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="fw-bold text-uppercase">KULLANICI <span style="color:#e31e24">YÖNETİMİ</span></h2>
+        <h2 class="fw-bold text-uppercase m-0">KULLANICI <span class="text-danger">YÖNETİMİ</span></h2>
         <div class="d-flex gap-2">
-            <input type="text" id="memberSearch" class="form-control bg-dark text-white border-secondary" placeholder="Kullanıcı ara...">
-            @* REGRESSION CHECK: Ekleme butonu fonksiyonelliği korunuyor *@
-            <button class="btn btn-primary"><i class="bi bi-person-plus"></i></button>
+            <input type="text" id="memberSearch" class="form-control bg-dark border-secondary text-white small" style="width: 250px;" placeholder="Üye ara...">
+            <a asp-action="Register" asp-controller="Account" class="btn btn-danger btn-sm px-3 d-flex align-items-center">
+                <i class="bi bi-person-plus-fill me-2"></i> YENİ ÜYE
+            </a>
         </div>
     </div>
 
-    <div class="card bg-dark border-secondary shadow">
-        <div class="card-body p-0">
-            <div class="table-responsive">
-                <table class="table table-dark table-hover mb-0" id="membersTable">
-                    <thead>
-                        <tr class="border-bottom border-secondary">
-                            <th class="ps-4">AD SOYAD</th>
-                            <th>E-POSTA</th>
-                            <th>ROL</th>
-                            <th>KAYIT TARİHİ</th>
-                            <th class="text-end pe-4">İŞLEMLER</th>
+    <div class="member-table-card shadow">
+        <div class="table-responsive">
+            <table class="table table-dark table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th class="ps-4">AD SOYAD</th>
+                        <th>E-POSTA</th>
+                        <th>ROL</th>
+                        <th>KAYIT TARİHİ</th>
+                        <th class="text-end pe-4">İŞLEMLER</th>
+                    </tr>
+                </thead>
+                <tbody id="memberTableBody">
+                    @foreach (var user in Model)
+                    {
+                        <tr>
+                            <td class="ps-4">
+                                <div class="fw-bold">@user.FirstName @user.LastName</div>
+                            </td>
+                            <td class="text-white-50">@user.Email</td>
+                            <td>
+                                @if (user.Role == UserRole.Admin)
+                                {
+                                    <span class="role-badge bg-danger">Yönetici</span>
+                                }
+                                else
+                                {
+                                    <span class="role-badge bg-secondary">Üye</span>
+                                }
+                            </td>
+                            <td class="small">@user.CreatedAt.ToString("dd.MM.yyyy")</td>
+                            <td class="text-end pe-4">
+                                <div class="d-flex justify-content-end gap-2">
+                                    @* DÜZENLEME BUTONU: asp-action ve asp-route-id eklendi *@
+                                    <a asp-action="EditMember" asp-route-id="@user.Id" class="btn btn-outline-info btn-action" title="Düzenle">
+                                        <i class="bi bi-pencil-square"></i>
+                                    </a>
+
+                                    @* SİLME İŞLEMİ (FORM İLE) *@
+                                    <form asp-action="DeleteMember" method="post" onsubmit="return confirmDelete(event, this);">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="id" value="@user.Id" />
+                                        <button type="submit" class="btn btn-outline-danger btn-action" title="Sil">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
                         </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var user in Model)
-                        {
-                            <tr class="align-middle border-bottom border-dark">
-                                <td class="ps-4 fw-bold">@user.FirstName @user.LastName</td>
-                                <td>@user.Email</td>
-                                <td>
-                                    @* MÜHENDİSLİK DÜZELTMESİ: Rol isimlendirmesi *@
-                                    <span class="badge @(user.Role == 0 ? "bg-danger" : (int)user.Role == 1 ? "bg-warning" : "bg-secondary")">
-                                        @(user.Role == 0 ? "Yönetici" : (int)user.Role == 1 ? "Personel" : "Üye")
-                                    </span>
-                                </td>
-                                <td>@user.CreatedAt.ToString("dd.MM.yyyy")</td>
-                                <td class="text-end pe-4">
-                                    <button class="btn btn-outline-info btn-sm"><i class="bi bi-pencil"></i></button>
-                                    <button class="btn btn-outline-danger btn-sm"><i class="bi bi-trash"></i></button>
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
+                    }
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        function confirmDelete(event, form) {
+            event.preventDefault();
+            
+            Swal.fire({
+                title: 'Emin misiniz?',
+                text: "Bu üye sistemden silinecek (IsDeleted = true).",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#e31e24',
+                cancelButtonColor: '#333',
+                confirmButtonText: 'Evet, Sil!',
+                cancelButtonText: 'Vazgeç',
+                background: '#111',
+                color: '#fff'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+            });
+        }
+
+        document.getElementById('memberSearch').addEventListener('keyup', function() {
+            let value = this.value.toLowerCase();
+            let rows = document.querySelectorAll("#memberTableBody tr");
+            rows.forEach(row => {
+                row.style.display = row.innerText.toLowerCase().includes(value) ? "" : "none";
+            });
+        });
+    </script>
+}

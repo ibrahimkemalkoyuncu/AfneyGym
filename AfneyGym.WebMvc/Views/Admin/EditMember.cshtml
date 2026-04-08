@@ -1,0 +1,74 @@
+﻿@using AfneyGym.Common.DTOs
+@using AfneyGym.Common.Enums
+@model UserUpdateDto
+@{
+    ViewData["Title"] = "Üye Düzenle";
+}
+
+<style>
+    .edit-card { background: #111; border: 1px solid #222; border-radius: 20px; padding: 30px; }
+    .edit-input { background: #1a1a1a !important; border: 1px solid #333 !important; color: white !important; }
+    .edit-input:focus { border-color: #e31e24 !important; box-shadow: 0 0 0 0.25rem rgba(227, 30, 36, 0.1) !important; }
+</style>
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="edit-card shadow-lg">
+                <div class="mb-4">
+                    <h2 class="fw-bold text-white text-uppercase m-0">ÜYE <span class="text-danger">DÜZENLE</span></h2>
+                    <p class="text-white-50 small">Kullanıcı bilgilerini güncelleyin. Şifre değişikliği bu ekrandan yapılmaz.</p>
+                </div>
+
+                <form asp-action="EditMember" method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" asp-for="Id" />
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="FirstName" class="form-label text-white-50 small text-uppercase">Ad</label>
+                            <input asp-for="FirstName" class="form-control edit-input" />
+                            <span asp-validation-for="FirstName" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="LastName" class="form-label text-white-50 small text-uppercase">Soyad</label>
+                            <input asp-for="LastName" class="form-control edit-input" />
+                            <span asp-validation-for="LastName" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Email" class="form-label text-white-50 small text-uppercase">E-Posta Adresi</label>
+                        <input asp-for="Email" class="form-control edit-input" />
+                        <span asp-validation-for="Email" class="text-danger small"></span>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Role" class="form-label text-white-50 small text-uppercase">Kullanıcı Rolü</label>
+                            <select asp-for="Role" class="form-select edit-input" 
+                                    asp-items="Html.GetEnumSelectList<UserRole>()"></select>
+                            <span asp-validation-for="Role" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6 mb-4">
+                            <label asp-for="GymId" class="form-label text-white-50 small text-uppercase">Bağlı Olduğu Şube</label>
+                            <select asp-for="GymId" class="form-select edit-input" asp-items="ViewBag.Gyms">
+                                <option value="">Şube Seçilmedi / Genel</option>
+                            </select>
+                            <span asp-validation-for="GymId" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="d-flex gap-2 pt-3 border-top border-secondary">
+                        <button type="submit" class="btn btn-danger px-5 fw-bold">GÜNCELLE</button>
+                        <a asp-action="Members" class="btn btn-outline-secondary px-4">İPTAL</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
