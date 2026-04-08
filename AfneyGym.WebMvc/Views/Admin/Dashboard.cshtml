@@ -1,26 +1,88 @@
-﻿@model Dictionary<string, int>
+﻿@using AfneyGym.Common.DTOs
+@model DashboardSummaryDto
 @{
-    ViewData["Title"] = "Admin Dashboard";
+    ViewData["Title"] = "Yönetim Paneli";
 }
 
+<style>
+    .stat-card {
+        background: #111;
+        border: 1px solid #222;
+        border-radius: 15px;
+        padding: 25px;
+        transition: 0.3s;
+        border-left: 5px solid #e31e24;
+    }
+    .stat-card:hover { transform: translateY(-5px); border-color: #e31e24; }
+    .stat-icon { font-size: 2.5rem; color: #333; }
+    .stat-value { font-size: 2rem; font-weight: 800; color: #fff; }
+    .stat-label { color: #aaa; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px; }
+</style>
+
 <div class="container-fluid">
-    <h2 class="page-title text-uppercase">Dashboard</h2> @* DÜZELTME: Class eklendi *@
+    <div class="mb-4">
+        <h2 class="fw-bold text-uppercase">SİSTEM <span class="text-danger">ÖZETİ</span></h2>
+        <p class="text-white-50">Salonunuzdaki anlık veriler ve operasyonel istatistikler.</p>
+    </div>
 
     <div class="row g-4">
-        @* Kartlar aynen kalacak... *@
+        @* TOPLAM ÜYE *@
         <div class="col-md-3">
-            <div class="card bg-dark border-0 shadow-sm h-100 p-3" style="border-left: 4px solid #e31e24 !important;">
-                <div class="d-flex align-items-center">
-                    <div class="flex-shrink-0 bg-danger bg-opacity-10 p-3 rounded">
-                        <i class="bi bi-people text-danger fs-3"></i>
+            <div class="stat-card shadow-sm">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="stat-label">Toplam Üye</div>
+                        <div class="stat-value">@Model.TotalMembers</div>
                     </div>
-                    <div class="flex-grow-1 ms-3">
-                        <h6 class="text-white-50 mb-1 small text-uppercase">Toplam Üye</h6>
-                        <h3 class="mb-0 fw-bold">@Model["TotalMembers"]</h3>
-                    </div>
+                    <div class="stat-icon"><i class="bi bi-people"></i></div>
                 </div>
             </div>
         </div>
-        @* Diğer kartlar... *@
+
+        @* AKTİF ABONELİK *@
+        <div class="col-md-3">
+            <div class="stat-card shadow-sm" style="border-left-color: #198754;">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="stat-label">Aktif Abonelik</div>
+                        <div class="stat-value">@Model.ActiveSubscriptions</div>
+                    </div>
+                    <div class="stat-icon text-success"><i class="bi bi-check-circle"></i></div>
+                </div>
+            </div>
+        </div>
+
+        @* EĞİTMEN KADROSU *@
+        <div class="col-md-3">
+            <div class="stat-card shadow-sm" style="border-left-color: #0dcaf0;">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="stat-label">Eğitmenler</div>
+                        <div class="stat-value">@Model.TotalTrainers</div>
+                    </div>
+                    <div class="stat-icon text-info"><i class="bi bi-person-badge"></i></div>
+                </div>
+            </div>
+        </div>
+
+        @* BUGÜNKÜ DERSLER *@
+        <div class="col-md-3">
+            <div class="stat-card shadow-sm" style="border-left-color: #ffc107;">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="stat-label">Bugünkü Dersler</div>
+                        <div class="stat-value">@Model.TodayLessonsCount</div>
+                    </div>
+                    <div class="stat-icon text-warning"><i class="bi bi-calendar-check"></i></div>
+                </div>
+            </div>
+        </div>
     </div>
+
+    @* GELECEK ADIM: Buraya "Son Kayıt Olanlar" tablosu eklenecek *@
 </div>
+
+@* AÇIKLAMA: 
+   - InvalidOperationException hatası @model DashboardSummaryDto tanımıyla çözüldü.
+   - Dictionary yapısından DTO yapısına tam geçiş sağlandı.
+*@

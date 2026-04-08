@@ -1,75 +1,53 @@
 ﻿@model List<AfneyGym.Domain.Entities.Lesson>
 @{
-    ViewData["Title"] = "Ders Programı";
+    ViewData["Title"] = "Ana Sayfa";
 }
 
 <style>
-    /* Hero Alanı: Macfit Estetiği */
-    .hero-section { 
-        padding: 60px 0; 
-        background: linear-gradient(45deg, #000, #1a1a1a); 
-        border-radius: 20px; 
-        margin-bottom: 40px; 
-        border: 1px solid #333; 
-    }
-    
-    /* Kart Tasarımı */
-    .lesson-card { 
-        background: #111; 
-        border: 1px solid #222; 
-        border-radius: 15px; 
-        transition: 0.3s ease-in-out; 
-        height: 100%; 
-        border-bottom: 3px solid transparent; 
-    }
-    .lesson-card:hover { 
-        border-bottom-color: #e31e24; 
-        transform: translateY(-5px); 
-    }
-    
-    /* Rozetler ve Progress Bar */
+    .hero-section { padding: 60px 0; background: linear-gradient(45deg, #000, #1a1a1a); border-radius: 20px; margin-bottom: 40px; border: 1px solid #333; }
+    .admin-hero { background: linear-gradient(45deg, #e31e24, #9a1216); border: none; }
+    .lesson-card { background: #111; border: 1px solid #222; border-radius: 15px; transition: 0.3s; height: 100%; border-bottom: 3px solid transparent; }
+    .lesson-card:hover { border-bottom-color: #e31e24; transform: translateY(-5px); }
     .status-badge { font-size: 0.75rem; padding: 4px 12px; border-radius: 20px; text-transform: uppercase; font-weight: bold; }
     .progress { height: 6px; background-color: #222; margin: 15px 0; }
     .progress-bar { background-color: #e31e24; }
-    
-    /* Durum Butonları */
-    .btn-joined { 
-        background-color: #198754 !important; 
-        color: white !important; 
-        border: none !important; 
-        cursor: default !important; 
-    }
-    .btn-cancel {
-        color: #6c757d;
-        font-size: 0.8rem;
-        text-decoration: none;
-        transition: 0.2s;
-        background: none;
-        border: none;
-    }
-    .btn-cancel:hover { color: #e31e24; text-decoration: underline; }
+    .btn-joined { background-color: #198754 !important; color: white !important; border: none !important; cursor: default !important; }
 </style>
 
 <div class="container">
-    <div class="hero-section text-center shadow-lg">
-        <h1 class="display-4 fw-bold text-white text-uppercase">Sınırlarını <span class="text-danger">Zorla</span></h1>
-        <p class="lead text-white-50">Bugün senin günün. Bir ders seç ve hemen başla.</p>
-    </div>
+    
+    @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+    {
+        @* --- ADMIN ÖZEL HERO ALANI --- *@
+        <div class="hero-section admin-hero text-center shadow-lg">
+            <h1 class="display-4 fw-bold text-white text-uppercase">Yönetici <span class="text-black">Paneli</span></h1>
+            <p class="lead text-white">Sistem durumu stabil. Bugün için planlanan <strong>@Model.Count(l => l.StartTime.Date == DateTime.Today)</strong> ders bulunuyor.</p>
+            <div class="d-flex justify-content-center gap-3 mt-3">
+                <a asp-controller="Admin" asp-action="Dashboard" class="btn btn-dark fw-bold px-4">DETAYLI ANALİZ</a>
+                <a asp-controller="Admin" asp-action="Lessons" class="btn btn-outline-light fw-bold px-4">DERSLERİ YÖNET</a>
+            </div>
+        </div>
+    }
+    else
+    {
+        @* --- ÜYE / MİSAFİR HERO ALANI --- *@
+        <div class="hero-section text-center shadow-lg">
+            <h1 class="display-4 fw-bold text-white text-uppercase">Sınırlarını <span class="text-danger">Zorla</span></h1>
+            <p class="lead text-white-50">Bugün senin günün. Bir ders seç ve hemen başla.</p>
+        </div>
+    }
 
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h3 class="fw-bold m-0 text-uppercase">Aktif <span class="text-danger">Dersler</span></h3>
-    </div>
+    <h3 class="fw-bold mb-4 text-uppercase">Aktif <span class="text-danger">Dersler</span></h3>
 
+    @* REGRESSION CHECK: Ders kartları ve katılım butonları tüm roller için erişilebilir (Admin izleyebilir) *@
     <div class="row g-4">
         @if (Model != null && Model.Any())
         {
             @foreach (var lesson in Model)
             {
-                // Kontenjan Verisi (Eager Loading ile HomeController'dan gelir)
                 int attendeeCount = lesson.Attendees?.Count ?? 0;
                 double occupancyRate = (double)attendeeCount / lesson.Capacity * 100;
                 
-                // Üye bu derse katılmış mı?
                 bool isUserJoined = false;
                 if(User.Identity.IsAuthenticated)
                 {
@@ -82,7 +60,7 @@
                 }
 
                 <div class="col-md-4">
-                    <div class="lesson-card p-4 d-flex flex-column shadow-sm">
+                    <div class="lesson-card p-4 d-flex flex-column">
                         <div class="d-flex justify-content-between align-items-start mb-3">
                             <h4 class="fw-bold text-white m-0">@lesson.Name</h4>
                             <span class="status-badge @(occupancyRate >= 100 ? "bg-secondary" : "bg-danger")">
@@ -91,70 +69,49 @@
                         </div>
 
                         <div class="text-white-50 small mb-2">
-                            <i class="bi bi-person-badge me-2 text-danger"></i> Eğitmen: @(lesson.Trainer?.FullName ?? "Belirtilmemiş")
+                            <i class="bi bi-person-badge me-2 text-danger"></i> @lesson.Trainer?.FullName
                         </div>
                         <div class="text-white-50 small mb-2">
                             <i class="bi bi-clock me-2 text-danger"></i> @lesson.StartTime.ToString("HH:mm") - @lesson.EndTime.ToString("HH:mm")
                         </div>
 
-                        <div class="progress shadow-sm">
+                        <div class="progress">
                             <div class="progress-bar" role="progressbar" style="width: @occupancyRate%"></div>
                         </div>
                         <div class="d-flex justify-content-between small text-white-50 mb-4">
-                            <span>Doluluk Oranı</span>
-                            <span>@attendeeCount / @lesson.Capacity</span>
+                            <span>Doluluk: @attendeeCount / @lesson.Capacity</span>
                         </div>
 
                         <div class="mt-auto">
                             @if (User.Identity.IsAuthenticated)
                             {
-                                if (isUserJoined)
+                                if (User.IsInRole("Admin"))
                                 {
-                                    @* DURUM 1: ÜYE KATILMIŞ *@
-                                    <div class="text-center">
-                                        <button class="btn btn-joined w-100 fw-bold mb-2">
-                                            <i class="bi bi-check-circle-fill me-2"></i>KATILDINIZ
-                                        </button>
-                                        <form asp-action="CancelJoin" method="post" onsubmit="return confirm('@lesson.Name dersi kaydınızı iptal etmek istediğinize emin misiniz?')">
-                                            @Html.AntiForgeryToken()
-                                            <input type="hidden" name="lessonId" value="@lesson.Id" />
-                                            <button type="submit" class="btn-cancel">
-                                                <i class="bi bi-x-circle me-1"></i> Kaydı İptal Et
-                                            </button>
-                                        </form>
-                                    </div>
+                                    <a asp-controller="Admin" asp-action="Lessons" class="btn btn-outline-secondary w-100 fw-bold">DERSİ DÜZENLE (ADMIN)</a>
                                 }
-                                else if (occupancyRate >= 100)
+                                else if (isUserJoined)
                                 {
-                                    @* DURUM 2: KONTENJAN DOLU *@
-                                    <button class="btn btn-outline-secondary w-100 disabled fw-bold">KONTENJAN DOLU</button>
+                                    <button class="btn btn-joined w-100 fw-bold"><i class="bi bi-check-circle me-2"></i>KATILDINIZ</button>
                                 }
                                 else
                                 {
-                                    @* DURUM 3: KATILABİLİR *@
                                     <form asp-action="JoinLesson" method="post">
                                         @Html.AntiForgeryToken()
                                         <input type="hidden" name="lessonId" value="@lesson.Id" />
-                                        <button type="submit" class="btn btn-danger w-100 fw-bold shadow">DERSE KATIL</button>
+                                        <button type="submit" class="btn btn-danger w-100 fw-bold @(occupancyRate >= 100 ? "disabled" : "")">
+                                            DERSE KATIL
+                                        </button>
                                     </form>
                                 }
                             }
                             else
                             {
-                                @* DURUM 4: GİRİŞ YAPILMAMIŞ *@
                                 <a asp-controller="Account" asp-action="Login" class="btn btn-outline-danger w-100 fw-bold">GİRİŞ YAP VE KATIL</a>
                             }
                         </div>
                     </div>
                 </div>
             }
-        }
-        else
-        {
-            <div class="col-12 text-center py-5">
-                <i class="bi bi-calendar-x fs-1 text-white-50"></i>
-                <p class="mt-3 text-white-50">Şu an aktif bir ders programı bulunmuyor.</p>
-            </div>
         }
     </div>
 </div>
