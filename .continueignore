@@ -1,0 +1,9 @@
+node_modules/
+bin/
+obj/
+.git/
+.vs/
+dist/
+publish/
+*.exe
+*.dll

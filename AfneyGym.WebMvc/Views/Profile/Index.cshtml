@@ -1,0 +1,104 @@
+﻿@using AfneyGym.Domain.Entities
+@model List<LessonAttendee>
+@{
+    ViewData["Title"] = "Profilim";
+    // CS0234 Düzeltmesi: Namespace açıkça belirtildi veya using ile yukarıda tanımlandı
+    var user = ViewBag.UserProfile as User;
+}
+
+<style>
+    .profile-header { background: linear-gradient(135deg, #111, #222); border: 1px solid #333; border-radius: 20px; padding: 30px; margin-bottom: 30px; }
+    .stat-card { background: #1a1a1a; border: 1px solid #333; border-radius: 15px; padding: 20px; text-align: center; }
+    .lesson-item { background: #111; border: 1px solid #222; border-radius: 12px; margin-bottom: 15px; transition: 0.3s; }
+    .lesson-item:hover { border-color: #e31e24; }
+    .nav-pills .nav-link { color: #aaa; border-radius: 10px; padding: 10px 20px; border: 1px solid transparent; }
+    .nav-pills .nav-link.active { background-color: #e31e24 !important; color: white; }
+</style>
+
+<div class="container">
+    @* Profil Başlık Alanı *@
+    <div class="profile-header d-flex align-items-center justify-content-between shadow-lg">
+        <div class="d-flex align-items-center gap-4">
+            <div class="bg-danger rounded-circle d-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                <i class="bi bi-person-fill fs-1 text-white"></i>
+            </div>
+            <div>
+                <h2 class="fw-bold m-0 text-white">@user?.FirstName @user?.LastName</h2>
+                <p class="text-white-50 m-0">@user?.Email | @(user?.Role == 0 ? "Yönetici" : "Üye")</p>
+                @* CS1061 Çözümü Burada Kullanılıyor *@
+                <span class="badge bg-dark border border-secondary mt-2">Şube: @(user?.Gym?.Name ?? "Genel Merkez")</span>
+            </div>
+        </div>
+        <div class="text-end">
+            <button class="btn btn-outline-light btn-sm"><i class="bi bi-pencil me-2"></i>Bilgilerimi Güncelle</button>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4 mb-4">
+            <div class="stat-card shadow-sm mb-3">
+                <h6 class="text-white-50 text-uppercase small">Antrenman Sayısı</h6>
+                <h2 class="fw-bold text-danger m-0">@Model.Count</h2>
+            </div>
+            <div class="stat-card shadow-sm">
+                <h6 class="text-white-50 text-uppercase small">Hesap Durumu</h6>
+                <h2 class="fw-bold text-success m-0">ONAYLI</h2>
+            </div>
+        </div>
+
+        <div class="col-md-8">
+            <ul class="nav nav-pills mb-4" id="pills-tab" role="tablist">
+                <li class="nav-item">
+                    <button class="nav-link active" data-bs-toggle="pill" data-bs-target="#future">Gelecek Programım</button>
+                </li>
+                <li class="nav-item">
+                    <button class="nav-link" data-bs-toggle="pill" data-bs-target="#past">Geçmiş Antrenmanlar</button>
+                </li>
+            </ul>
+
+            <div class="tab-content pt-2">
+                <div class="tab-pane fade show active" id="future">
+                    @if (!Model.Any(la => la.Lesson.StartTime >= DateTime.Now))
+                    {
+                        <p class="text-white-50 italic">Henüz planlanmış bir dersiniz bulunmuyor.</p>
+                    }
+                    @foreach (var item in Model.Where(la => la.Lesson.StartTime >= DateTime.Now))
+                    {
+                        <div class="lesson-item p-3 d-flex align-items-center justify-content-between shadow">
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="text-center bg-dark p-2 rounded" style="min-width: 60px; border: 1px solid #333;">
+                                    <div class="text-danger fw-bold">@item.Lesson.StartTime.ToString("dd")</div>
+                                    <div class="small text-white-50 text-uppercase">@item.Lesson.StartTime.ToString("MMM")</div>
+                                </div>
+                                <div>
+                                    <h6 class="fw-bold m-0 text-white">@item.Lesson.Name</h6>
+                                    <small class="text-white-50">Eğitmen: @item.Lesson.Trainer?.FullName</small>
+                                </div>
+                            </div>
+                            <div class="text-end">
+                                <div class="text-white fw-bold mb-2">@item.Lesson.StartTime.ToString("HH:mm")</div>
+                                <form asp-controller="Home" asp-action="CancelJoin" method="post" onsubmit="return confirm('Bu dersten ayrılmak istediğinize emin misiniz?')">
+                                    <input type="hidden" name="lessonId" value="@item.LessonId" />
+                                    <button type="submit" class="btn btn-link btn-sm text-danger text-decoration-none">İptal Et</button>
+                                </form>
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                <div class="tab-pane fade" id="past">
+                    @foreach (var item in Model.Where(la => la.Lesson.StartTime < DateTime.Now))
+                    {
+                        <div class="lesson-item p-3 opacity-50 border-secondary">
+                             <div class="d-flex align-items-center justify-content-between">
+                                <h6 class="fw-bold m-0 text-white">@item.Lesson.Name</h6>
+                                <span class="badge bg-success">Tamamlandı</span>
+                             </div>
+                             <small class="text-white-50">@item.Lesson.StartTime.ToString("dd MMMM yyyy")</small>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

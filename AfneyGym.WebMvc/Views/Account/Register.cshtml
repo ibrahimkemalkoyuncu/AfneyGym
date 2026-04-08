@@ -1,0 +1,65 @@
+﻿@model AfneyGym.Common.DTOs.UserRegisterDto
+@{
+    ViewData["Title"] = "Üye Ol";
+}
+
+<div class="row justify-content-center mt-5">
+    <div class="col-md-5">
+        <div class="card shadow-lg border-0">
+            <div class="card-header text-center border-0 pt-4 bg-transparent">
+                <h2 class="fw-bold"><span style="color:#e31e24">YENİ</span> ÜYELİK</h2>
+                <p class="text-white-50">AfneyGym ailesine katıl ve sınırlarını zorla.</p>
+            </div>
+            <div class="card-body p-4">
+                <form asp-action="Register" method="post">
+                    @* Önemli: CSRF saldırılarına karşı Tag Helper otomatik token ekler *@
+                    
+                    <div class="mb-3">
+                        <label asp-for="FirstName" class="form-label">Ad</label>
+                        <input asp-for="FirstName" class="form-control" placeholder="Adınızı giriniz" />
+                        <span asp-validation-for="FirstName" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="LastName" class="form-label">Soyad</label>
+                        <input asp-for="LastName" class="form-control" placeholder="Soyadınızı giriniz" />
+                        <span asp-validation-for="LastName" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Email" class="form-label">E-posta Adresi</label>
+                        <input asp-for="Email" class="form-control" placeholder="orn: ali@mail.com" />
+                        <span asp-validation-for="Email" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Password" class="form-label">Şifre</label>
+                        <input asp-for="Password" type="password" class="form-control" placeholder="••••••" />
+                        <span asp-validation-for="Password" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-4">
+                        <label asp-for="ConfirmPassword" class="form-label">Şifre Tekrar</label>
+                        <input asp-for="ConfirmPassword" type="password" class="form-control" placeholder="••••••" />
+                        <span asp-validation-for="ConfirmPassword" class="text-danger small"></span>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary btn-lg">KAYIT OL</button>
+                    </div>
+
+                    <div class="text-center mt-3">
+                        <span class="text-white-50 small">Zaten üye misin?</span>
+                        <a asp-action="Login" class="text-white small fw-bold text-decoration-none"> Giriş Yap</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @* Client-side validation için jQuery kütüphanelerini ekliyoruz.
+       Bu sayede form sunucuya gitmeden tarayıcıda doğrulanır (Hız ve Performans). *@
+    <partial name="_ValidationScriptsPartial" />
+}

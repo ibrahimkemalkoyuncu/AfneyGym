@@ -1,0 +1,56 @@
+﻿@model List<AfneyGym.Domain.Entities.Trainer>
+@{
+    ViewData["Title"] = "Eğitmen Yönetimi";
+}
+
+<style>
+    .trainer-card { background: #1a1a1a; border: none; border-radius: 15px; overflow: hidden; transition: transform 0.3s ease; position: relative; }
+    .trainer-card:hover { transform: translateY(-10px); }
+    .trainer-img-wrapper { position: relative; height: 350px; overflow: hidden; }
+    .trainer-img { width: 100%; height: 100%; object-fit: cover; }
+    .specialty-badge { position: absolute; bottom: 15px; left: 15px; background: #e31e24; color: white; padding: 5px 15px; border-radius: 5px; font-weight: bold; font-size: 0.8rem; text-transform: uppercase; }
+    .trainer-info { padding: 20px; background: linear-gradient(to bottom, #1a1a1a, #000); }
+    .trainer-name { color: #fff; font-weight: 800; font-size: 1.2rem; margin-bottom: 5px; }
+    .trainer-bio { color: #aaa; font-size: 0.85rem; line-height: 1.4; height: 40px; overflow: hidden; }
+    .action-buttons { display: flex; border-top: 1px solid #333; background: #000; }
+    .action-btn { flex: 1; padding: 12px; background: none; border: none; color: #fff; text-decoration: none; transition: 0.2s; font-size: 0.9rem; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+    .btn-edit:hover { background: #0056b3; color: white; }
+    .btn-delete:hover { background: #e31e24; color: white; }
+</style>
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-5">
+        <h2 class="fw-bold text-uppercase m-0">EĞİTMEN <span class="text-danger">KADROMUZ</span></h2>
+        <a asp-action="CreateTrainer" class="btn btn-danger shadow-sm px-4"><i class="bi bi-plus-lg me-2"></i>YENİ EĞİTMEN</a>
+    </div>
+
+    <div class="row g-4">
+        @if (Model != null && Model.Any())
+        {
+            @foreach (var trainer in Model)
+            {
+                <div class="col-xl-3 col-lg-4 col-md-6">
+                    <div class="trainer-card shadow-lg">
+                        <div class="trainer-img-wrapper">
+                            <img src="@(string.IsNullOrEmpty(trainer.ImageUrl) ? "/img/default-trainer.png" : trainer.ImageUrl)" class="trainer-img" alt="@trainer.FullName">
+                            <div class="specialty-badge">@trainer.Specialty</div>
+                        </div>
+                        <div class="trainer-info">
+                            <div class="trainer-name text-uppercase">@trainer.FullName</div>
+                            <div class="trainer-bio">@trainer.Bio</div>
+                        </div>
+                        <div class="action-buttons">
+                            @* DÜZELTİLEN KISIM: asp-action ve ID eklendi *@
+                            <a asp-action="EditTrainer" asp-route-id="@trainer.Id" class="action-btn btn-edit border-end border-secondary">
+                                <i class="bi bi-pencil-square me-2"></i>DÜZENLE
+                            </a>
+                            <form asp-action="DeleteTrainer" asp-route-id="@trainer.Id" method="post" onsubmit="return confirm('Silmek istediğinize emin misiniz?');" style="flex:1; display:flex;">
+                                <button type="submit" class="action-btn btn-delete w-100"><i class="bi bi-trash3 me-2"></i>SİL</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+</div>

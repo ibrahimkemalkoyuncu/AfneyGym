@@ -1,0 +1,57 @@
+﻿@model List<AfneyGym.Domain.Entities.Lesson>
+@{
+    ViewData["Title"] = "Ders Yönetimi";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold text-uppercase m-0">DERS <span class="text-danger">PROGRAMI</span></h2>
+        <a asp-action="CreateLesson" class="btn btn-danger px-4 shadow-sm">
+            <i class="bi bi-calendar-plus me-2"></i>YENİ DERS EKLE
+        </a>
+    </div>
+
+    <div class="card bg-dark border-secondary shadow">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-dark table-hover mb-0">
+                    <thead>
+                        <tr class="border-bottom border-secondary">
+                            <th class="ps-4">DERS ADI</th>
+                            <th>EĞİTMEN</th>
+                            <th>BAŞLANGIÇ</th>
+                            <th>SÜRE</th>
+                            <th>KONTENJAN</th>
+                            <th class="text-end pe-4">İŞLEMLER</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model != null && Model.Any())
+                        {
+                            @foreach (var lesson in Model)
+                            {
+                                <tr class="align-middle border-bottom border-dark">
+                                    <td class="ps-4 fw-bold">@lesson.Name</td>
+                                    <td>@lesson.Trainer?.FullName</td>
+                                    <td>@lesson.StartTime.ToString("dd.MM.yyyy HH:mm")</td>
+                                    <td>@((lesson.EndTime - lesson.StartTime).TotalMinutes) Dakika</td>
+                                    <td>@lesson.Capacity Kişi</td>
+                                    <td class="text-end pe-4">
+                                        <button class="btn btn-outline-info btn-sm me-1"><i class="bi bi-pencil"></i></button>
+                                        <button class="btn btn-outline-danger btn-sm"><i class="bi bi-trash"></i></button>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="6" class="text-center py-5 text-white-50">Henüz ders programı oluşturulmadı.</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

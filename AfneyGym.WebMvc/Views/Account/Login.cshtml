@@ -1,0 +1,47 @@
+﻿@model AfneyGym.Common.DTOs.UserLoginDto
+@{
+    ViewData["Title"] = "Giriş Yap";
+}
+
+<div class="row justify-content-center mt-5">
+    <div class="col-md-4">
+        <div class="card shadow-lg border-0">
+            <div class="card-header text-center border-0 pt-4 bg-transparent">
+                <h2 class="fw-bold"><span style="color:#e31e24">ÜYE</span> GİRİŞİ</h2>
+                <p class="text-white-50">Hedeflerine bir adım daha yaklaş.</p>
+            </div>
+            <div class="card-body p-4">
+                @* Genel hata mesajlarını (E-posta/Şifre hatalı gibi) burada gösteriyoruz *@
+                <div asp-validation-summary="ModelOnly" class="text-danger small mb-3"></div>
+
+                <form asp-action="Login" method="post">
+                    <div class="mb-3">
+                        <label asp-for="Email" class="form-label">E-posta</label>
+                        <input asp-for="Email" class="form-control" placeholder="E-posta adresiniz" />
+                        <span asp-validation-for="Email" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-4">
+                        <label asp-for="Password" class="form-label">Şifre</label>
+                        <input asp-for="Password" type="password" class="form-control" placeholder="••••••" />
+                        <span asp-validation-for="Password" class="text-danger small"></span>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary btn-lg">GİRİŞ YAP</button>
+                    </div>
+
+                    <div class="text-center mt-3">
+                        <span class="text-white-50 small">Henüz üye değil misin?</span>
+                        <a asp-action="Register" class="text-white small fw-bold text-decoration-none"> Hemen Katıl</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @* İstemci tarafı doğrulaması için *@
+    <partial name="_ValidationScriptsPartial" />
+}

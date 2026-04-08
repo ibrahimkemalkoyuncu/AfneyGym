@@ -1,0 +1,26 @@
+﻿@model Dictionary<string, int>
+@{
+    ViewData["Title"] = "Admin Dashboard";
+}
+
+<div class="container-fluid">
+    <h2 class="page-title text-uppercase">Dashboard</h2> @* DÜZELTME: Class eklendi *@
+
+    <div class="row g-4">
+        @* Kartlar aynen kalacak... *@
+        <div class="col-md-3">
+            <div class="card bg-dark border-0 shadow-sm h-100 p-3" style="border-left: 4px solid #e31e24 !important;">
+                <div class="d-flex align-items-center">
+                    <div class="flex-shrink-0 bg-danger bg-opacity-10 p-3 rounded">
+                        <i class="bi bi-people text-danger fs-3"></i>
+                    </div>
+                    <div class="flex-grow-1 ms-3">
+                        <h6 class="text-white-50 mb-1 small text-uppercase">Toplam Üye</h6>
+                        <h3 class="mb-0 fw-bold">@Model["TotalMembers"]</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @* Diğer kartlar... *@
+    </div>
+</div>

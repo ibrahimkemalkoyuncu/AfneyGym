@@ -1,0 +1,76 @@
+﻿@model AfneyGym.Domain.Entities.Trainer
+@{
+    ViewData["Title"] = "Eğitmen Düzenle";
+}
+
+<style>
+    .form-group label { color: #ffffff !important; font-weight: 600; margin-bottom: 8px; display: block; text-transform: uppercase; font-size: 0.85rem; }
+    .bg-dark-input { background-color: #1a1a1a !important; border: 1px solid #333 !important; color: #ffffff !important; padding: 12px; }
+    .bg-dark-input:focus { border-color: #e31e24 !important; box-shadow: 0 0 0 0.25rem rgba(227, 30, 36, 0.1) !important; }
+    .card-custom { background-color: #111; border: 1px solid #222; border-radius: 12px; }
+    .current-img { width: 120px; height: 120px; object-fit: cover; border-radius: 10px; border: 2px solid #e31e24; }
+</style>
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card card-custom shadow-lg">
+            <div class="card-header border-bottom border-secondary py-3">
+                <h4 class="fw-bold mb-0 text-uppercase text-white">
+                    <i class="bi bi-pencil-square me-2 text-danger"></i> EĞİTMEN <span style="color:#e31e24">DÜZENLE</span>
+                </h4>
+            </div>
+            <div class="card-body p-4">
+                <form asp-action="EditTrainer" method="post" enctype="multipart/form-data">
+                    @* MÜHENDİSLİK NOTU: Id bilgisini taşımak kritik, aksi halde Update işlemi yapılamaz *@
+                    <input type="hidden" asp-for="Id" />
+                    
+                    <div class="row mb-4">
+                        <div class="col-md-4 text-center">
+                            <label>MEVCUT FOTOĞRAF</label>
+                            <img src="@Model.ImageUrl" class="current-img shadow" alt="Trainer" />
+                        </div>
+                        <div class="col-md-8">
+                            <div class="form-group mb-3">
+                                <label asp-for="FullName">AD SOYAD</label>
+                                <input asp-for="FullName" class="form-control bg-dark-input" />
+                                <span asp-validation-for="FullName" class="text-danger small"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="Specialty">UZMANLIK / BRANŞ</label>
+                                <select asp-for="Specialty" class="form-select bg-dark-input">
+                                    <option value="Fitness">Fitness</option>
+                                    <option value="Yoga">Yoga</option>
+                                    <option value="Pilates">Pilates</option>
+                                    <option value="Crossfit">Crossfit</option>
+                                    <option value="Boks">Boks</option>
+                                </select>
+                                <span asp-validation-for="Specialty" class="text-danger small"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-4 form-group">
+                        <label>YENİ FOTOĞRAF (Değiştirmek istemiyorsanız boş bırakın)</label>
+                        <input type="file" name="imageFile" class="form-control bg-dark-input" accept="image/*" />
+                    </div>
+
+                    <div class="mb-4 form-group">
+                        <label asp-for="Bio">BİYOGRAFİ / DENEYİM</label>
+                        <textarea asp-for="Bio" rows="4" class="form-control bg-dark-input"></textarea>
+                        <span asp-validation-for="Bio" class="text-danger small"></span>
+                    </div>
+
+                    @* REGRESSION CHECK: İptal butonu her zaman Trainers listesine döner *@
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-danger px-5 fw-bold">DEĞİŞİKLİKLERİ KAYDET</button>
+                        <a asp-action="Trainers" class="btn btn-outline-secondary px-4">İPTAL</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
