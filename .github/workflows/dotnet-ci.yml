@@ -28,3 +28,35 @@ jobs:
 
       - name: Build
         run: dotnet build AfneyGym.slnx --configuration Release --no-restore
+
+      - name: Detect test projects
+        id: detect_tests
+        shell: pwsh
+        run: |
+          $projects = Get-ChildItem -Path . -Recurse -Filter *.csproj |
+            Where-Object { $_.Name -match 'Test|Tests' }
+
+          if ($projects.Count -gt 0) {
+            "has_tests=true" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+            "test_projects=$($projects.FullName -join ';')" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+          }
+          else {
+            "has_tests=false" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+          }
+
+      - name: Test
+        if: steps.detect_tests.outputs.has_tests == 'true'
+        shell: pwsh
+        run: |
+          New-Item -Path ./TestResults -ItemType Directory -Force | Out-Null
+          $projects = "${{ steps.detect_tests.outputs.test_projects }}" -split ';'
+          foreach ($project in $projects) {
+            dotnet test $project --configuration Release --no-build --logger "trx;LogFileName=$(Split-Path $project -Leaf).trx" --results-directory ./TestResults
+          }
+
+      - name: Upload test results
+        if: always() && steps.detect_tests.outputs.has_tests == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: TestResults/*.trx

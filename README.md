@@ -53,3 +53,37 @@ GitHub Actions workflow is defined in .github/workflows/dotnet-ci.yml and runs r
 - main: Production-ready branch
 - develop: Integration branch
 - feature/*: Feature branches merged via pull request
+
+## PR Validation Checklist
+
+Use this quick flow once to verify branch protection is enforced as expected.
+
+1. Create a branch from develop:
+
+```bash
+git checkout develop
+git checkout -b feature/pr-protection-test
+```
+
+2. Make a small change, commit, and push:
+
+```bash
+git add README.md
+git commit -m "Test PR protection flow"
+git push -u origin feature/pr-protection-test
+```
+
+3. Open a pull request to main and verify:
+
+- Direct merge is blocked until checks finish.
+- CI check `build` is required.
+- At least 1 approval is required.
+- Conversation resolution is required.
+
+4. Merge after checks and approval, then clean branch:
+
+```bash
+git checkout develop
+git branch -D feature/pr-protection-test
+git push origin --delete feature/pr-protection-test
+```
