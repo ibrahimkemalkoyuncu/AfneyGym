@@ -1,0 +1,61 @@
+﻿@using AfneyGym.Common.DTOs
+@using AfneyGym.Common.Enums
+@model UserUpdateDto
+@{
+    ViewData["Title"] = "Üye Düzenle";
+}
+
+<div class="mx-auto max-w-3xl rounded-2xl border border-slate-700/60 bg-panel p-6 shadow-2xl shadow-black/30">
+    <div class="mb-6">
+        <h2 class="text-3xl font-black uppercase text-white">ÜYE <span class="text-accent">DÜZENLE</span></h2>
+        <p class="mt-1 text-sm text-slate-400">Kullanıcı bilgilerini güncelleyin. Şifre değişikliği bu ekrandan yapılmaz.</p>
+    </div>
+
+    <form asp-action="EditMember" method="post" class="space-y-5">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="Id" />
+
+        <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <div>
+                <label asp-for="FirstName" class="mb-2 block text-xs font-semibold uppercase tracking-wide text-slate-400">Ad</label>
+                <input asp-for="FirstName" class="block w-full rounded-lg border border-slate-600 bg-panelSoft px-3 py-3 text-sm text-white focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30" />
+                <span asp-validation-for="FirstName" class="mt-1 block text-xs text-rose-300"></span>
+            </div>
+            <div>
+                <label asp-for="LastName" class="mb-2 block text-xs font-semibold uppercase tracking-wide text-slate-400">Soyad</label>
+                <input asp-for="LastName" class="block w-full rounded-lg border border-slate-600 bg-panelSoft px-3 py-3 text-sm text-white focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30" />
+                <span asp-validation-for="LastName" class="mt-1 block text-xs text-rose-300"></span>
+            </div>
+        </div>
+
+        <div>
+            <label asp-for="Email" class="mb-2 block text-xs font-semibold uppercase tracking-wide text-slate-400">E-Posta Adresi</label>
+            <input asp-for="Email" class="block w-full rounded-lg border border-slate-600 bg-panelSoft px-3 py-3 text-sm text-white focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30" />
+            <span asp-validation-for="Email" class="mt-1 block text-xs text-rose-300"></span>
+        </div>
+
+        <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <div>
+                <label asp-for="Role" class="mb-2 block text-xs font-semibold uppercase tracking-wide text-slate-400">Kullanıcı Rolü</label>
+                <select asp-for="Role" class="block w-full rounded-lg border border-slate-600 bg-panelSoft px-3 py-3 text-sm text-white focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30" asp-items="Html.GetEnumSelectList<UserRole>()"></select>
+                <span asp-validation-for="Role" class="mt-1 block text-xs text-rose-300"></span>
+            </div>
+            <div>
+                <label asp-for="GymId" class="mb-2 block text-xs font-semibold uppercase tracking-wide text-slate-400">Bağlı Olduğu Şube</label>
+                <select asp-for="GymId" class="block w-full rounded-lg border border-slate-600 bg-panelSoft px-3 py-3 text-sm text-white focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30" asp-items="ViewBag.Gyms">
+                    <option value="">Şube Seçilmedi / Genel</option>
+                </select>
+                <span asp-validation-for="GymId" class="mt-1 block text-xs text-rose-300"></span>
+            </div>
+        </div>
+
+        <div class="flex gap-3 border-t border-slate-700/60 pt-4">
+            <button type="submit" class="inline-flex items-center justify-center rounded-lg bg-accent px-6 py-3 text-sm font-bold text-slate-900 transition hover:bg-sky-300">GÜNCELLE</button>
+            <a asp-action="Members" class="inline-flex items-center justify-center rounded-lg border border-slate-500 px-5 py-3 text-sm font-semibold text-slate-200 hover:bg-panelSoft">İPTAL</a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

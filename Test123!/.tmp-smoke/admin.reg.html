@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>&#xDC;ye Ol - AfneyGym</title>
+    <link rel="stylesheet" href="/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <style>
+        :root { --sidebar-width: 250px; --sidebar-collapsed-width: 80px; --primary-red: #e31e24; --dark-bg: #0b0b0b; }
+        body { background-color: var(--dark-bg); color: #f8f9fa; font-family: 'Inter', sans-serif; overflow-x: hidden; margin: 0; }
+        #sidebar { width: var(--sidebar-width); height: 100vh; position: fixed; background: #000; transition: all 0.3s ease-in-out; border-right: 1px solid #333; z-index: 1050; left: 0; top: 0; }
+        #sidebar.active { width: var(--sidebar-collapsed-width); }
+        #content { transition: all 0.3s ease-in-out; min-height: 100vh; display: flex; flex-direction: column; }
+        .has-sidebar { margin-left: var(--sidebar-width); width: calc(100% - var(--sidebar-width)); }
+        #sidebar.active + .has-sidebar { margin-left: var(--sidebar-collapsed-width); width: calc(100% - var(--sidebar-collapsed-width)); }
+        .no-sidebar { margin-left: 0; width: 100%; }
+        .nav-link { color: #ccc; padding: 15px 25px; display: flex; align-items: center; gap: 15px; text-decoration: none; border-left: 4px solid transparent; }
+        .nav-link:hover, .nav-link.active { color: #fff; background: rgba(227, 30, 36, 0.1); border-left: 4px solid var(--primary-red); }
+        .sidebar-header { padding: 25px; height: 80px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #222; }
+    </style>
+</head>
+<body>
+
+
+    <div b-70qgj8d8pe id="content" class="no-sidebar">
+            <nav b-70qgj8d8pe class="navbar navbar-expand-lg navbar-dark bg-black border-bottom border-secondary p-3">
+                <div b-70qgj8d8pe class="container-fluid">
+                    <a class="navbar-brand fw-bold" href="/">AFNEY<span b-70qgj8d8pe style="color:var(--primary-red)">GYM</span></a>
+                    <div b-70qgj8d8pe class="ms-auto d-flex align-items-center">
+                            <a class="btn btn-outline-light btn-sm me-2" href="/Account/Login">Giriş Yap</a>
+                            <a class="btn btn-danger btn-sm" href="/Account/Register">Üye Ol</a>
+                    </div>
+                </div>
+            </nav>
+
+        <div b-70qgj8d8pe class="container-fluid p-4">
+            
+<style>
+    .auth-card { background: #111; border: 1px solid #222; border-radius: 20px; padding: 40px; }
+    .auth-input { background: #1a1a1a !important; border: 1px solid #333 !important; color: white !important; padding: 12px; }
+    .auth-input:focus { border-color: #e31e24 !important; box-shadow: 0 0 0 0.25rem rgba(227, 30, 36, 0.1) !important; }
+</style>
+
+<div class="row justify-content-center align-items-center" style="min-height: 85vh;">
+    <div class="col-md-6">
+        <div class="auth-card shadow-lg">
+            <div class="text-center mb-4">
+                <h2 class="fw-bold text-white text-uppercase">Aramıza <span class="text-danger">Katıl</span></h2>
+                <p class="text-white-50">Yeni bir başlangıç için formu doldur.</p>
+            </div>
+
+            <form method="post" action="/Account/Register">
+                
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label text-white-50 small text-uppercase" for="FirstName">Ad</label>
+                        <input class="form-control auth-input" type="text" data-val="true" data-val-length="The field FirstName must be a string with a maximum length of 50." data-val-length-max="50" data-val-required="Ad alan&#x131; zorunludur." id="FirstName" maxlength="50" name="FirstName" value="" />
+                        <span class="text-danger small field-validation-valid" data-valmsg-for="FirstName" data-valmsg-replace="true"></span>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label text-white-50 small text-uppercase" for="LastName">Soyad</label>
+                        <input class="form-control auth-input" type="text" data-val="true" data-val-length="The field LastName must be a string with a maximum length of 50." data-val-length-max="50" data-val-required="Soyad alan&#x131; zorunludur." id="LastName" maxlength="50" name="LastName" value="" />
+                        <span class="text-danger small field-validation-valid" data-valmsg-for="LastName" data-valmsg-replace="true"></span>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label text-white-50 small text-uppercase" for="Email">E-Posta Adresi</label>
+                    <input class="form-control auth-input" type="email" data-val="true" data-val-email="Ge&#xE7;ersiz e-posta format&#x131;." data-val-required="E-posta adresi zorunludur." id="Email" name="Email" value="" />
+                    <span class="text-danger small field-validation-valid" data-valmsg-for="Email" data-valmsg-replace="true"></span>
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label text-white-50 small text-uppercase" for="Password">Şifre Oluştur</label>
+                    <input type="password" class="form-control auth-input" data-val="true" data-val-minlength="&#x15E;ifre en az 6 karakter olmal&#x131;d&#x131;r." data-val-minlength-min="6" data-val-required="&#x15E;ifre zorunludur." id="Password" name="Password" />
+                    <span class="text-danger small field-validation-valid" data-valmsg-for="Password" data-valmsg-replace="true"></span>
+                </div>
+
+                <div class="mb-4">
+                        <label class="form-label" for="ConfirmPassword">Şifre Tekrar</label>
+                        <input type="password" class="form-control" placeholder="••••••" data-val="true" data-val-equalto="&#x15E;ifreler e&#x15F;le&#x15F;miyor." data-val-equalto-other="*.Password" data-val-required="The ConfirmPassword field is required." id="ConfirmPassword" name="ConfirmPassword" />
+                        <span class="text-danger small field-validation-valid" data-valmsg-for="ConfirmPassword" data-valmsg-replace="true"></span>
+                    </div>
+
+                <button type="submit" class="btn btn-danger w-100 fw-bold py-2 mb-3 shadow">KAYDI TAMAMLA</button>
+
+                <div class="text-center">
+                    <p class="text-white-50 small">Zaten üye misin? <a class="text-danger text-decoration-none fw-bold" href="/Account/Login">Giriş Yap</a></p>
+                </div>
+            <input name="__RequestVerificationToken" type="hidden" value="CfDJ8EQq2fm-ALtDnt4NVXI8ZE1je97Axg_AK00zJUjCJ7GiJdAPafULN9Iw8s1w9Hyfd4p8L04CXyIldWQnItPXczrTUUPG3Ws4OM__NPltRIF7QXeTPc437y9TWHO4-hleS5xNOjOsGVa6bmzMsf38Lrs" /></form>
+        </div>
+    </div>
+</div>
+
+
+        </div>
+    </div>
+
+    <script src="/lib/jquery/dist/jquery.min.js"></script>
+    <script src="/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        $(document).ready(function () {
+            $('#sidebarCollapse').on('click', function () {
+                $('#sidebar').toggleClass('active');
+                if ($('#sidebar').hasClass('active')) {
+                    $('#content').css({ 'margin-left': 'var(--sidebar-collapsed-width)', 'width': 'calc(100% - var(--sidebar-collapsed-width))' });
+                } else {
+                    $('#content').css({ 'margin-left': 'var(--sidebar-width)', 'width': 'calc(100% - var(--sidebar-width))' });
+                }
+            });
+
+            // MÜHENDİSLİK DÜZELTMESİ: Html.Raw() kullanımı ile karakter sorunu çözüldü
+        });
+    </script>
+    
+    <script src="/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+<script src="/lib/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.min.js"></script>
+
+
+</body>
+</html>

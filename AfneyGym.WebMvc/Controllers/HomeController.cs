@@ -1,5 +1,6 @@
 using AfneyGym.Data.Context;
 using AfneyGym.Domain.Entities;
+using AfneyGym.Domain.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -10,23 +11,31 @@ namespace AfneyGym.WebMvc.Controllers;
 public class HomeController : Controller
 {
     private readonly AppDbContext _context;
-
-    public HomeController(AppDbContext context)
+    private readonly ILessonService _lessonService;
+    public HomeController(AppDbContext context, ILessonService lessonService)
     {
         _context = context;
+        _lessonService = lessonService;
     }
+
+    //public async Task<IActionResult> Index()
+    //{
+    //    var lessons = await _context.Lessons
+    //        .Include(l => l.Trainer)
+    //        .Include(l => l.Attendees)
+    //        .Where(l => !l.IsDeleted)
+    //        .OrderBy(l => l.StartTime)
+    //        .ToListAsync();
+
+    //    return View(lessons);
+    //}
 
     public async Task<IActionResult> Index()
     {
-        var lessons = await _context.Lessons
-            .Include(l => l.Trainer)
-            .Include(l => l.Attendees)
-            .Where(l => !l.IsDeleted)
-            .OrderBy(l => l.StartTime)
-            .ToListAsync();
-
+        var lessons = await _lessonService.GetAllWithTrainersAsync();
         return View(lessons);
     }
+
 
     [Authorize]
     [HttpPost]

@@ -1,65 +1,68 @@
-﻿@model AfneyGym.Common.DTOs.UserRegisterDto
+﻿@using AfneyGym.Common.DTOs
+@model UserRegisterDto
 @{
     ViewData["Title"] = "Üye Ol";
 }
 
-<div class="row justify-content-center mt-5">
-    <div class="col-md-5">
-        <div class="card shadow-lg border-0">
-            <div class="card-header text-center border-0 pt-4 bg-transparent">
-                <h2 class="fw-bold"><span style="color:#e31e24">YENİ</span> ÜYELİK</h2>
-                <p class="text-white-50">AfneyGym ailesine katıl ve sınırlarını zorla.</p>
-            </div>
-            <div class="card-body p-4">
-                <form asp-action="Register" method="post">
-                    @* Önemli: CSRF saldırılarına karşı Tag Helper otomatik token ekler *@
-                    
-                    <div class="mb-3">
-                        <label asp-for="FirstName" class="form-label">Ad</label>
-                        <input asp-for="FirstName" class="form-control" placeholder="Adınızı giriniz" />
-                        <span asp-validation-for="FirstName" class="text-danger small"></span>
-                    </div>
-
-                    <div class="mb-3">
-                        <label asp-for="LastName" class="form-label">Soyad</label>
-                        <input asp-for="LastName" class="form-control" placeholder="Soyadınızı giriniz" />
-                        <span asp-validation-for="LastName" class="text-danger small"></span>
-                    </div>
-
-                    <div class="mb-3">
-                        <label asp-for="Email" class="form-label">E-posta Adresi</label>
-                        <input asp-for="Email" class="form-control" placeholder="orn: ali@mail.com" />
-                        <span asp-validation-for="Email" class="text-danger small"></span>
-                    </div>
-
-                    <div class="mb-3">
-                        <label asp-for="Password" class="form-label">Şifre</label>
-                        <input asp-for="Password" type="password" class="form-control" placeholder="••••••" />
-                        <span asp-validation-for="Password" class="text-danger small"></span>
-                    </div>
-
-                    <div class="mb-4">
-                        <label asp-for="ConfirmPassword" class="form-label">Şifre Tekrar</label>
-                        <input asp-for="ConfirmPassword" type="password" class="form-control" placeholder="••••••" />
-                        <span asp-validation-for="ConfirmPassword" class="text-danger small"></span>
-                    </div>
-
-                    <div class="d-grid gap-2">
-                        <button type="submit" class="btn btn-primary btn-lg">KAYIT OL</button>
-                    </div>
-
-                    <div class="text-center mt-3">
-                        <span class="text-white-50 small">Zaten üye misin?</span>
-                        <a asp-action="Login" class="text-white small fw-bold text-decoration-none"> Giriş Yap</a>
-                    </div>
-                </form>
-            </div>
+<div class="mx-auto flex min-h-[72vh] max-w-2xl items-center">
+    <div class="w-full rounded-2xl border border-slate-700/60 bg-panel p-8 shadow-2xl shadow-black/30">
+        <div class="mb-6 text-center">
+            <h2 class="text-3xl font-black uppercase text-white">Aramıza <span class="text-accent">Katıl</span></h2>
+            <p class="mt-2 text-sm text-slate-400">Yeni bir başlangıç için formu doldur.</p>
         </div>
-    </div>
+
+        <form asp-action="Register" method="post" asp-antiforgery="true" class="space-y-5">
+            <div asp-validation-summary="ModelOnly" class="rounded-lg border border-rose-400/30 bg-rose-500/10 p-3 text-sm text-rose-200"></div>
+
+            <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+                <div>
+                    <label asp-for="FirstName" class="mb-2 block text-xs font-semibold uppercase tracking-wide text-slate-400">Ad</label>
+                    <input asp-for="FirstName" class="block w-full rounded-lg border border-slate-600 bg-panelSoft px-3 py-3 text-sm text-white placeholder-slate-500 focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30" />
+                    <span asp-validation-for="FirstName" class="mt-1 block text-xs text-rose-300"></span>
+                </div>
+                <div>
+                    <label asp-for="LastName" class="mb-2 block text-xs font-semibold uppercase tracking-wide text-slate-400">Soyad</label>
+                    <input asp-for="LastName" class="block w-full rounded-lg border border-slate-600 bg-panelSoft px-3 py-3 text-sm text-white placeholder-slate-500 focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30" />
+                    <span asp-validation-for="LastName" class="mt-1 block text-xs text-rose-300"></span>
+                </div>
+            </div>
+
+            <div>
+                <label asp-for="Email" class="mb-2 block text-xs font-semibold uppercase tracking-wide text-slate-400">E-Posta Adresi</label>
+                <div class="relative">
+                    <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-slate-500">
+                        <i class="bi bi-envelope"></i>
+                    </div>
+                    <input asp-for="Email" class="block w-full rounded-lg border border-slate-600 bg-panelSoft py-3 pl-10 pr-3 text-sm text-white placeholder-slate-500 focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30" />
+                </div>
+                <span asp-validation-for="Email" class="mt-1 block text-xs text-rose-300"></span>
+            </div>
+
+            <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+                <div>
+                    <label asp-for="Password" class="mb-2 block text-xs font-semibold uppercase tracking-wide text-slate-400">Şifre Oluştur</label>
+                    <input asp-for="Password" type="password" class="block w-full rounded-lg border border-slate-600 bg-panelSoft px-3 py-3 text-sm text-white placeholder-slate-500 focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30" />
+                    <span asp-validation-for="Password" class="mt-1 block text-xs text-rose-300"></span>
+                </div>
+                <div>
+                    <label asp-for="ConfirmPassword" class="mb-2 block text-xs font-semibold uppercase tracking-wide text-slate-400">Şifre Tekrar</label>
+                    <input asp-for="ConfirmPassword" type="password" class="block w-full rounded-lg border border-slate-600 bg-panelSoft px-3 py-3 text-sm text-white placeholder-slate-500 focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30" placeholder="••••••" />
+                    <span asp-validation-for="ConfirmPassword" class="mt-1 block text-xs text-rose-300"></span>
+                </div>
+            </div>
+
+            <button type="submit" class="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-accent px-4 py-3 text-sm font-bold text-slate-900 transition hover:bg-sky-300">
+                <i class="bi bi-person-plus-fill"></i> KAYDI TAMAMLA
+            </button>
+
+            <div class="text-center text-sm text-slate-400">
+                Zaten üye misin?
+                <a asp-action="Login" class="font-semibold text-accent hover:text-sky-300">Giriş Yap</a>
+            </div>
+        </form>
+        </div>
 </div>
 
 @section Scripts {
-    @* Client-side validation için jQuery kütüphanelerini ekliyoruz.
-       Bu sayede form sunucuya gitmeden tarayıcıda doğrulanır (Hız ve Performans). *@
     <partial name="_ValidationScriptsPartial" />
 }

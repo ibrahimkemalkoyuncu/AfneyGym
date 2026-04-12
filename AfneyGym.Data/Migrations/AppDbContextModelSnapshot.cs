@@ -107,8 +107,8 @@ namespace AfneyGym.Data.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("EnrollmentDate")
-                        .HasColumnType("datetime2");
+                    b.Property<bool>("IsAttended")
+                        .HasColumnType("bit");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
@@ -192,6 +192,10 @@ namespace AfneyGym.Data.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("FullName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -213,7 +217,7 @@ namespace AfneyGym.Data.Migrations
                     b.ToTable("Trainers");
                 });
 
-            modelBuilder.Entity("User", b =>
+            modelBuilder.Entity("AfneyGym.Domain.Entities.User", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -241,9 +245,6 @@ namespace AfneyGym.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid?>("LessonId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<string>("PasswordHash")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -263,8 +264,6 @@ namespace AfneyGym.Data.Migrations
                         .IsUnique();
 
                     b.HasIndex("GymId");
-
-                    b.HasIndex("LessonId");
 
                     b.ToTable("Users");
                 });
@@ -291,13 +290,13 @@ namespace AfneyGym.Data.Migrations
             modelBuilder.Entity("AfneyGym.Domain.Entities.LessonAttendee", b =>
                 {
                     b.HasOne("AfneyGym.Domain.Entities.Lesson", "Lesson")
-                        .WithMany()
+                        .WithMany("Attendees")
                         .HasForeignKey("LessonId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("User", "User")
-                        .WithMany()
+                    b.HasOne("AfneyGym.Domain.Entities.User", "User")
+                        .WithMany("Attendees")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -309,7 +308,7 @@ namespace AfneyGym.Data.Migrations
 
             modelBuilder.Entity("AfneyGym.Domain.Entities.Subscription", b =>
                 {
-                    b.HasOne("User", "User")
+                    b.HasOne("AfneyGym.Domain.Entities.User", "User")
                         .WithMany("Subscriptions")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -318,15 +317,13 @@ namespace AfneyGym.Data.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("User", b =>
+            modelBuilder.Entity("AfneyGym.Domain.Entities.User", b =>
                 {
-                    b.HasOne("AfneyGym.Domain.Entities.Gym", null)
+                    b.HasOne("AfneyGym.Domain.Entities.Gym", "Gym")
                         .WithMany("Members")
                         .HasForeignKey("GymId");
 
-                    b.HasOne("AfneyGym.Domain.Entities.Lesson", null)
-                        .WithMany("Attendees")
-                        .HasForeignKey("LessonId");
+                    b.Navigation("Gym");
                 });
 
             modelBuilder.Entity("AfneyGym.Domain.Entities.Gym", b =>
@@ -344,8 +341,10 @@ namespace AfneyGym.Data.Migrations
                     b.Navigation("Lessons");
                 });
 
-            modelBuilder.Entity("User", b =>
+            modelBuilder.Entity("AfneyGym.Domain.Entities.User", b =>
                 {
+                    b.Navigation("Attendees");
+
                     b.Navigation("Subscriptions");
                 });
 #pragma warning restore 612, 618

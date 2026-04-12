@@ -1,76 +1,124 @@
-﻿@model AfneyGym.Domain.Entities.Trainer
+﻿@using AfneyGym.Domain.Entities
+@model Lesson
 @{
-    ViewData["Title"] = "Eğitmen Düzenle";
+    ViewData["Title"] = "Ders Yoklaması";
+    var attendeeCount = Model.Attendees?.Count ?? 0;
 }
 
 <style>
-    .form-group label { color: #ffffff !important; font-weight: 600; margin-bottom: 8px; display: block; text-transform: uppercase; font-size: 0.85rem; }
-    .bg-dark-input { background-color: #1a1a1a !important; border: 1px solid #333 !important; color: #ffffff !important; padding: 12px; }
-    .bg-dark-input:focus { border-color: #e31e24 !important; box-shadow: 0 0 0 0.25rem rgba(227, 30, 36, 0.1) !important; }
-    .card-custom { background-color: #111; border: 1px solid #222; border-radius: 12px; }
-    .current-img { width: 120px; height: 120px; object-fit: cover; border-radius: 10px; border: 2px solid #e31e24; }
+    .attendance-container { max-width: 800px; margin: auto; }
+    .member-row { 
+        background: #111; 
+        border: 1px solid #222; 
+        border-radius: 12px; 
+        padding: 15px; 
+        margin-bottom: 10px; 
+        transition: 0.2s;
+        cursor: pointer;
+    }
+    .member-row:hover { border-color: #444; }
+    .member-row.selected { border-color: #22c55e; background: #0a1a11; }
+    
+    /* Gizli checkbox ama tüm satır tıklanabilir */
+    .attendance-check { display: none; }
+    
+    .status-icon { font-size: 1.5rem; color: #333; }
+    .selected .status-icon { color: #22c55e; }
 </style>
 
-<div class="row justify-content-center">
-    <div class="col-md-8">
-        <div class="card card-custom shadow-lg">
-            <div class="card-header border-bottom border-secondary py-3">
-                <h4 class="fw-bold mb-0 text-uppercase text-white">
-                    <i class="bi bi-pencil-square me-2 text-danger"></i> EĞİTMEN <span style="color:#e31e24">DÜZENLE</span>
-                </h4>
+<div class="attendance-container py-4">
+    <div class="mb-4">
+        <div class="mb-2 flex items-end justify-between gap-3">
+            <div>
+                <h2 class="m-0 text-2xl font-black uppercase text-white">@Model.Name</h2>
+                <p class="m-0 text-sm text-slate-400"><i class="bi bi-clock mr-1"></i> @Model.StartTime.ToString("HH:mm") - @Model.EndTime.ToString("HH:mm")</p>
             </div>
-            <div class="card-body p-4">
-                <form asp-action="EditTrainer" method="post" enctype="multipart/form-data">
-                    @* MÜHENDİSLİK NOTU: Id bilgisini taşımak kritik, aksi halde Update işlemi yapılamaz *@
-                    <input type="hidden" asp-for="Id" />
-                    
-                    <div class="row mb-4">
-                        <div class="col-md-4 text-center">
-                            <label>MEVCUT FOTOĞRAF</label>
-                            <img src="@Model.ImageUrl" class="current-img shadow" alt="Trainer" />
-                        </div>
-                        <div class="col-md-8">
-                            <div class="form-group mb-3">
-                                <label asp-for="FullName">AD SOYAD</label>
-                                <input asp-for="FullName" class="form-control bg-dark-input" />
-                                <span asp-validation-for="FullName" class="text-danger small"></span>
-                            </div>
-                            <div class="form-group">
-                                <label asp-for="Specialty">UZMANLIK / BRANŞ</label>
-                                <select asp-for="Specialty" class="form-select bg-dark-input">
-                                    <option value="Fitness">Fitness</option>
-                                    <option value="Yoga">Yoga</option>
-                                    <option value="Pilates">Pilates</option>
-                                    <option value="Crossfit">Crossfit</option>
-                                    <option value="Boks">Boks</option>
-                                </select>
-                                <span asp-validation-for="Specialty" class="text-danger small"></span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="mb-4 form-group">
-                        <label>YENİ FOTOĞRAF (Değiştirmek istemiyorsanız boş bırakın)</label>
-                        <input type="file" name="imageFile" class="form-control bg-dark-input" accept="image/*" />
-                    </div>
-
-                    <div class="mb-4 form-group">
-                        <label asp-for="Bio">BİYOGRAFİ / DENEYİM</label>
-                        <textarea asp-for="Bio" rows="4" class="form-control bg-dark-input"></textarea>
-                        <span asp-validation-for="Bio" class="text-danger small"></span>
-                    </div>
-
-                    @* REGRESSION CHECK: İptal butonu her zaman Trainers listesine döner *@
-                    <div class="d-flex gap-2">
-                        <button type="submit" class="btn btn-danger px-5 fw-bold">DEĞİŞİKLİKLERİ KAYDET</button>
-                        <a asp-action="Trainers" class="btn btn-outline-secondary px-4">İPTAL</a>
-                    </div>
-                </form>
+            <div class="text-right">
+                <span class="inline-flex rounded-full bg-accent px-3 py-1 text-xs font-bold text-slate-900">@attendeeCount / @Model.Capacity Kişi</span>
             </div>
         </div>
+        <div class="h-2 rounded-full bg-slate-800">
+            <div class="h-full rounded-full bg-accent" style="width: @( (attendeeCount * 100) / Model.Capacity )%"></div>
+        </div>
     </div>
+
+    <div class="mb-3">
+        <div class="relative">
+            <i class="bi bi-search pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-500"></i>
+            <input type="text" id="memberFilter" class="w-full rounded-xl border border-slate-700 bg-slate-950 py-3 pl-10 pr-4 text-sm text-white outline-none ring-0 placeholder:text-slate-500 focus:border-accent" placeholder="Üye ismine göre ara...">
+        </div>
+    </div>
+
+    <form asp-action="SubmitAttendance" method="post" id="attendanceForm">
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="lessonId" value="@Model.Id" />
+
+        <div id="memberList">
+            @if (Model.Attendees != null && Model.Attendees.Any())
+            {
+                @foreach (var attendee in Model.Attendees)
+                {
+                    <div class="member-row flex items-center justify-between @(attendee.IsAttended ? "selected" : "")" 
+                         onclick="toggleMember(this)">
+                        <div class="flex items-center">
+                            <div class="mr-3 flex h-11 w-11 items-center justify-center rounded-full bg-slate-700">
+                                <span class="text-sm font-bold text-slate-100">@attendee.User.FirstName[0]@attendee.User.LastName[0]</span>
+                            </div>
+                            <div>
+                                <h6 class="m-0 text-sm font-bold text-white">@attendee.User.FirstName @attendee.User.LastName</h6>
+                                <small class="text-slate-400">@attendee.User.Email</small>
+                            </div>
+                        </div>
+                        <div class="status-icon">
+                            <i class="bi bi-check-circle-fill"></i>
+                        </div>
+                        @* Form verisi için gizli input *@
+                        <input type="checkbox" name="attendedUserIds" value="@attendee.UserId" 
+                               class="attendance-check" @(attendee.IsAttended ? "checked" : "") />
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="py-10 text-center text-slate-400">
+                    <i class="bi bi-person-x mb-3 block text-4xl"></i>
+                    Bu ders için henüz bir katılım kaydı bulunmuyor.
+                </div>
+            }
+        </div>
+
+        <div class="fixed bottom-0 left-0 right-0 z-30 border-t border-slate-700 bg-gymbg/95 p-3 text-center backdrop-blur">
+            <div class="attendance-container">
+                <div class="flex gap-2">
+                    <a asp-action="MyLessons" class="inline-flex w-1/2 items-center justify-center rounded-lg border border-slate-500 px-4 py-3 text-sm font-bold text-slate-200 hover:bg-panelSoft">VAZGEÇ</a>
+                    <button type="submit" class="inline-flex w-1/2 items-center justify-center rounded-lg bg-accent px-4 py-3 text-sm font-bold text-slate-900 hover:bg-sky-300">YOKLAMAYI KAYDET</button>
+                </div>
+            </div>
+        </div>
+    </form>
 </div>
 
 @section Scripts {
-    <partial name="_ValidationScriptsPartial" />
+    <script>
+        // Satıra tıklandığında seçimi yönet
+        function toggleMember(element) {
+            const checkbox = element.querySelector('.attendance-check');
+            checkbox.checked = !checkbox.checked;
+            
+            if (checkbox.checked) {
+                element.classList.add('selected');
+            } else {
+                element.classList.remove('selected');
+            }
+        }
+
+        // Anlık Filtreleme
+        document.getElementById('memberFilter').addEventListener('keyup', function() {
+            const val = this.value.toLowerCase();
+            document.querySelectorAll('.member-row').forEach(row => {
+                const name = row.querySelector('h6').innerText.toLowerCase();
+                row.style.display = name.includes(val) ? "flex" : "none";
+            });
+        });
+    </script>
 }
