@@ -2,6 +2,7 @@
 
 public class DashboardSummaryDto
 {
+    // Sayaçlar
     public int TotalMembers { get; set; }
     public int ActiveSubscriptions { get; set; }
     public int TotalTrainers { get; set; }
@@ -11,6 +12,9 @@ public class DashboardSummaryDto
     // Entity yerine DTO listeleri kullanılarak CS0246 hataları çözüldü
     public List<RecentMemberDto> RecentMembers { get; set; } = new();
     public List<TodaysLessonDto> TodaysLessons { get; set; } = new();
+    
+    // Devamsızlık Raporu Listesi
+    public List<AbsenteeDto> DailyAbsentees { get; set; } = new();
 }
 
 // Tablolar için hafif veri yapıları
