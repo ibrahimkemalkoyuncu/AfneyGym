@@ -1,117 +1,40 @@
-﻿@model List<AfneyGym.Domain.Entities.Lesson>
-@{
-    ViewData["Title"] = "Ana Sayfa";
-}
+﻿@using AfneyGym.Domain.Entities
+@using AfneyGym.Common.Enums
+@model List<Lesson>
 
-<style>
-    .hero-section { padding: 60px 0; background: linear-gradient(45deg, #000, #1a1a1a); border-radius: 20px; margin-bottom: 40px; border: 1px solid #333; }
-    .admin-hero { background: linear-gradient(45deg, #e31e24, #9a1216); border: none; }
-    .lesson-card { background: #111; border: 1px solid #222; border-radius: 15px; transition: 0.3s; height: 100%; border-bottom: 3px solid transparent; }
-    .lesson-card:hover { border-bottom-color: #e31e24; transform: translateY(-5px); }
-    .status-badge { font-size: 0.75rem; padding: 4px 12px; border-radius: 20px; text-transform: uppercase; font-weight: bold; }
-    .progress { height: 6px; background-color: #222; margin: 15px 0; }
-    .progress-bar { background-color: #e31e24; }
-    .btn-joined { background-color: #198754 !important; color: white !important; border: none !important; cursor: default !important; }
-</style>
-
-<div class="container">
-    
-    @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
-    {
-        @* --- ADMIN ÖZEL HERO ALANI --- *@
-        <div class="hero-section admin-hero text-center shadow-lg">
-            <h1 class="display-4 fw-bold text-white text-uppercase">Yönetici <span class="text-black">Paneli</span></h1>
-            <p class="lead text-white">Sistem durumu stabil. Bugün için planlanan <strong>@Model.Count(l => l.StartTime.Date == DateTime.Today)</strong> ders bulunuyor.</p>
-            <div class="d-flex justify-content-center gap-3 mt-3">
-                <a asp-controller="Admin" asp-action="Dashboard" class="btn btn-dark fw-bold px-4">DETAYLI ANALİZ</a>
-                <a asp-controller="Admin" asp-action="Lessons" class="btn btn-outline-light fw-bold px-4">DERSLERİ YÖNET</a>
-            </div>
-        </div>
-    }
-    else
-    {
-        @* --- ÜYE / MİSAFİR HERO ALANI --- *@
-        <div class="hero-section text-center shadow-lg">
-            <h1 class="display-4 fw-bold text-white text-uppercase">Sınırlarını <span class="text-danger">Zorla</span></h1>
-            <p class="lead text-white-50">Bugün senin günün. Bir ders seç ve hemen başla.</p>
-        </div>
-    }
-
-    <h3 class="fw-bold mb-4 text-uppercase">Aktif <span class="text-danger">Dersler</span></h3>
-
-    @* REGRESSION CHECK: Ders kartları ve katılım butonları tüm roller için erişilebilir (Admin izleyebilir) *@
-    <div class="row g-4">
-        @if (Model != null && Model.Any())
+<div class="container py-5">
+    <div class="row">
+        @foreach (var lesson in Model)
         {
-            @foreach (var lesson in Model)
-            {
-                int attendeeCount = lesson.Attendees?.Count ?? 0;
-                double occupancyRate = (double)attendeeCount / lesson.Capacity * 100;
-                
-                bool isUserJoined = false;
-                if(User.Identity.IsAuthenticated)
-                {
-                    var userIdClaim = User.FindFirst("UserId")?.Value;
-                    if(!string.IsNullOrEmpty(userIdClaim))
-                    {
-                        var userId = Guid.Parse(userIdClaim);
-                        isUserJoined = lesson.Attendees?.Any(a => a.UserId == userId) ?? false;
-                    }
-                }
-
-                <div class="col-md-4">
-                    <div class="lesson-card p-4 d-flex flex-column">
-                        <div class="d-flex justify-content-between align-items-start mb-3">
-                            <h4 class="fw-bold text-white m-0">@lesson.Name</h4>
-                            <span class="status-badge @(occupancyRate >= 100 ? "bg-secondary" : "bg-danger")">
-                                @(occupancyRate >= 100 ? "DOLU" : "AÇIK")
-                            </span>
+            <div class="col-md-4 mb-4">
+                <div class="card bg-dark text-white border-secondary h-100 shadow">
+                    <div class="card-body">
+                        <h5 class="card-title fw-bold text-danger text-uppercase">@lesson.Name</h5>
+                        <p class="small text-white-50">@lesson.Description</p>
+                        <hr class="border-secondary">
+                        <div class="d-flex justify-content-between small mb-3">
+                            <span><i class="bi bi-person-badge me-1"></i> @lesson.Trainer?.FullName</span>
+                            <span><i class="bi bi-people me-1"></i> @lesson.Attendees.Count / @lesson.Capacity</span>
                         </div>
 
-                        <div class="text-white-50 small mb-2">
-                            <i class="bi bi-person-badge me-2 text-danger"></i> @lesson.Trainer?.FullName
-                        </div>
-                        <div class="text-white-50 small mb-2">
-                            <i class="bi bi-clock me-2 text-danger"></i> @lesson.StartTime.ToString("HH:mm") - @lesson.EndTime.ToString("HH:mm")
-                        </div>
-
-                        <div class="progress">
-                            <div class="progress-bar" role="progressbar" style="width: @occupancyRate%"></div>
-                        </div>
-                        <div class="d-flex justify-content-between small text-white-50 mb-4">
-                            <span>Doluluk: @attendeeCount / @lesson.Capacity</span>
-                        </div>
-
-                        <div class="mt-auto">
-                            @if (User.Identity.IsAuthenticated)
-                            {
-                                if (User.IsInRole("Admin"))
-                                {
-                                    <a asp-controller="Admin" asp-action="Lessons" class="btn btn-outline-secondary w-100 fw-bold">DERSİ DÜZENLE (ADMIN)</a>
-                                }
-                                else if (isUserJoined)
-                                {
-                                    <button class="btn btn-joined w-100 fw-bold"><i class="bi bi-check-circle me-2"></i>KATILDINIZ</button>
-                                }
-                                else
-                                {
-                                    <form asp-action="JoinLesson" method="post">
-                                        @Html.AntiForgeryToken()
-                                        <input type="hidden" name="lessonId" value="@lesson.Id" />
-                                        <button type="submit" class="btn btn-danger w-100 fw-bold @(occupancyRate >= 100 ? "disabled" : "")">
-                                            DERSE KATIL
-                                        </button>
-                                    </form>
-                                }
-                            }
-                            else
-                            {
-                                <a asp-controller="Account" asp-action="Login" class="btn btn-outline-danger w-100 fw-bold">GİRİŞ YAP VE KATIL</a>
-                            }
-                        </div>
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            @* REGRESSION CHECK: Abonelik kontrolü UI tarafında yapılıyor *@
+                            <form asp-controller="Home" asp-action="JoinLesson" method="post">
+                                <input type="hidden" name="lessonId" value="@lesson.Id" />
+                                
+                                <button type="submit" class="btn btn-danger w-100 fw-bold shadow">
+                                    DERSE KATIL
+                                </button>
+                            </form>
+                        }
+                        else
+                        {
+                            <a asp-controller="Account" asp-action="Login" class="btn btn-outline-light w-100">Giriş Yap ve Katıl</a>
+                        }
                     </div>
                 </div>
-            }
+            </div>
         }
     </div>
 </div>

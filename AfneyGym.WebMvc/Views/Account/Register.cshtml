@@ -46,6 +46,12 @@
                     <span asp-validation-for="Password" class="text-danger small"></span>
                 </div>
 
+                <div class="mb-4">
+                        <label asp-for="ConfirmPassword" class="form-label">Şifre Tekrar</label>
+                        <input asp-for="ConfirmPassword" type="password" class="form-control" placeholder="••••••" />
+                        <span asp-validation-for="ConfirmPassword" class="text-danger small"></span>
+                    </div>
+
                 <button type="submit" class="btn btn-danger w-100 fw-bold py-2 mb-3 shadow">KAYDI TAMAMLA</button>
 
                 <div class="text-center">

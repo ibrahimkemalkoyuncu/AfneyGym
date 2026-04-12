@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Yeni E&#x11F;itmen Ekle - AfneyGym</title>
+    <link rel="stylesheet" href="/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <style>
+        :root { --sidebar-width: 250px; --sidebar-collapsed-width: 80px; --primary-red: #e31e24; --dark-bg: #0b0b0b; }
+        body { background-color: var(--dark-bg); color: #f8f9fa; font-family: 'Inter', sans-serif; overflow-x: hidden; margin: 0; }
+        #sidebar { width: var(--sidebar-width); height: 100vh; position: fixed; background: #000; transition: all 0.3s ease-in-out; border-right: 1px solid #333; z-index: 1050; left: 0; top: 0; }
+        #sidebar.active { width: var(--sidebar-collapsed-width); }
+        #content { transition: all 0.3s ease-in-out; min-height: 100vh; display: flex; flex-direction: column; }
+        .has-sidebar { margin-left: var(--sidebar-width); width: calc(100% - var(--sidebar-width)); }
+        #sidebar.active + .has-sidebar { margin-left: var(--sidebar-collapsed-width); width: calc(100% - var(--sidebar-collapsed-width)); }
+        .no-sidebar { margin-left: 0; width: 100%; }
+        .nav-link { color: #ccc; padding: 15px 25px; display: flex; align-items: center; gap: 15px; text-decoration: none; border-left: 4px solid transparent; }
+        .nav-link:hover, .nav-link.active { color: #fff; background: rgba(227, 30, 36, 0.1); border-left: 4px solid var(--primary-red); }
+        .sidebar-header { padding: 25px; height: 80px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #222; }
+    </style>
+</head>
+<body>
+
+        <nav b-70qgj8d8pe id="sidebar">
+            <div b-70qgj8d8pe class="sidebar-header">
+                <h4 b-70qgj8d8pe class="fw-bold mb-0 text-white">AFNEY<span b-70qgj8d8pe style="color:var(--primary-red)">GYM</span></h4>
+                <button b-70qgj8d8pe type="button" id="sidebarCollapse" class="btn btn-dark btn-sm"><i b-70qgj8d8pe class="bi bi-list"></i></button>
+            </div>
+            <ul b-70qgj8d8pe class="nav flex-column mt-3">
+                <li b-70qgj8d8pe><a class="nav-link" href="/Admin/Dashboard"><i b-70qgj8d8pe class="bi bi-speedometer2"></i> <span b-70qgj8d8pe class="link-text">Dashboard</span></a></li>
+                <li b-70qgj8d8pe><a class="nav-link" href="/Admin/Members"><i b-70qgj8d8pe class="bi bi-people"></i> <span b-70qgj8d8pe class="link-text">Kullanıcılar</span></a></li>
+                <li b-70qgj8d8pe><a class="nav-link" href="/Admin/Trainers"><i b-70qgj8d8pe class="bi bi-person-badge"></i> <span b-70qgj8d8pe class="link-text">Eğitmenler</span></a></li>
+                <li b-70qgj8d8pe><a class="nav-link" href="/Admin/Lessons"><i b-70qgj8d8pe class="bi bi-calendar-event"></i> <span b-70qgj8d8pe class="link-text">Dersler</span></a></li>
+                <li b-70qgj8d8pe class="mt-auto"><a class="nav-link text-danger" href="/Account/Logout"><i b-70qgj8d8pe class="bi bi-box-arrow-right"></i> <span b-70qgj8d8pe class="link-text">Çıkış</span></a></li>
+            </ul>
+        </nav>
+
+    <div b-70qgj8d8pe id="content" class="has-sidebar">
+
+        <div b-70qgj8d8pe class="container-fluid p-4">
+            
+<style>
+    /* Form elemanları için özel görünürlük ayarları */
+    .form-group label { color: #ffffff !important; font-weight: 600; margin-bottom: 8px; display: block; }
+    .bg-dark-input { 
+        background-color: #1a1a1a !important; 
+        border: 1px solid #333 !important; 
+        color: #ffffff !important; 
+        padding: 12px;
+    }
+    .bg-dark-input:focus { 
+        border-color: #e31e24 !important; 
+        box-shadow: 0 0 0 0.25 rugged rgba(227, 30, 36, 0.25) !important; 
+    }
+    .card-custom { background-color: #111; border: 1px solid #222; border-radius: 12px; }
+</style>
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card card-custom shadow-lg">
+            <div class="card-header border-bottom border-secondary py-3">
+                <h4 class="fw-bold mb-0 text-uppercase text-white">
+                    <i class="bi bi-person-plus me-2 text-danger"></i> YENİ EĞİTMEN <span style="color:#e31e24">TANIMLA</span>
+                </h4>
+            </div>
+            <div class="card-body p-4">
+                <form method="post" enctype="multipart/form-data" action="/Admin/CreateTrainer">
+                    <div class="row">
+                        <div class="col-md-6 mb-4 form-group">
+                            <label for="FullName">AD SOYAD</label>
+                            <input class="form-control bg-dark-input" placeholder="Eğitmen tam adı" type="text" data-val="true" data-val-required="The FullName field is required." id="FullName" name="FullName" value="" />
+                            <span class="text-danger small field-validation-valid" data-valmsg-for="FullName" data-valmsg-replace="true"></span>
+                        </div>
+                        <div class="col-md-6 mb-4 form-group">
+                            <label for="Specialty">UZMANLIK / BRANŞ</label>
+                            <select class="form-select bg-dark-input" id="Specialty" name="Specialty">
+                                <option value="">Seçiniz...</option>
+                                <option value="Fitness">Fitness</option>
+                                <option value="Yoga">Yoga</option>
+                                <option value="Pilates">Pilates</option>
+                                <option value="Crossfit">Crossfit</option>
+                            </select>
+                            <span class="text-danger small field-validation-valid" data-valmsg-for="Specialty" data-valmsg-replace="true"></span>
+                        </div>
+                    </div>
+
+                    <div class="mb-4 form-group">
+                        <label>PROFİL FOTOĞRAFI</label>
+                        <input type="file" name="imageFile" class="form-control bg-dark-input" accept="image/*" />
+                    </div>
+
+                    <div class="mb-4 form-group">
+                        <label for="Bio">BİYOGRAFİ / DENEYİM</label>
+                        <textarea rows="4" class="form-control bg-dark-input" placeholder="Eğitmen hakkında detaylı bilgi..." id="Bio" name="Bio">
+</textarea>
+                        <span class="text-danger small field-validation-valid" data-valmsg-for="Bio" data-valmsg-replace="true"></span>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-danger px-5 fw-bold">KAYDET</button>
+                        <a class="btn btn-outline-secondary px-4" href="/Admin/Trainers">İPTAL</a>
+                    </div>
+                <input name="__RequestVerificationToken" type="hidden" value="CfDJ8EQq2fm-ALtDnt4NVXI8ZE3-dJJqPsHHa990RB-PKbY9K3taBJSGPP5JcH4ZcmcQgvIDM5lxjbm6-8WzeREDAfDbh6e0okJ-ZGFhWXPXqlh9W5aC1Q3aH8QkVamx1UkmxxxE6IhVPBPDCqYisVV8xyZrruu4X4148lOKH5trIhNS-s2Z279cYZoA9QT96DKQNw" /></form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+        </div>
+    </div>
+
+    <script src="/lib/jquery/dist/jquery.min.js"></script>
+    <script src="/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        $(document).ready(function () {
+            $('#sidebarCollapse').on('click', function () {
+                $('#sidebar').toggleClass('active');
+                if ($('#sidebar').hasClass('active')) {
+                    $('#content').css({ 'margin-left': 'var(--sidebar-collapsed-width)', 'width': 'calc(100% - var(--sidebar-collapsed-width))' });
+                } else {
+                    $('#content').css({ 'margin-left': 'var(--sidebar-width)', 'width': 'calc(100% - var(--sidebar-width))' });
+                }
+            });
+
+            // MÜHENDİSLİK DÜZELTMESİ: Html.Raw() kullanımı ile karakter sorunu çözüldü
+        });
+    </script>
+    
+    <script src="/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+<script src="/lib/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.min.js"></script>
+
+
+</body>
+</html>

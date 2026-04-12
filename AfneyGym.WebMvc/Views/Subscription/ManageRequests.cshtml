@@ -1,0 +1,63 @@
+﻿@using AfneyGym.Domain.Entities
+@using AfneyGym.Common.Enums
+@model List<Subscription>
+@{
+    ViewData["Title"] = "Abonelik Talepleri";
+    Layout = "_AdminLayout";
+}
+
+<style>
+    .request-card { background: #111; border: 1px solid #222; border-radius: 15px; overflow: hidden; }
+    .status-pending { color: #ffc107; font-weight: bold; }
+</style>
+
+<div class="container-fluid">
+    <div class="mb-4">
+        <h2 class="fw-bold text-uppercase m-0">BEKLEYEN <span class="text-warning">TALEPLER</span></h2>
+        <p class="text-white-50">Üyeler tarafından gönderilen ve onay bekleyen abonelik ödemeleri.</p>
+    </div>
+
+    <div class="request-card shadow">
+        <div class="table-responsive">
+            <table class="table table-dark table-hover mb-0">
+                <thead>
+                    <tr class="small text-white-50">
+                        <th class="ps-4">ÜYE BİLGİSİ</th>
+                        <th>TALEP EDİLEN SÜRE</th>
+                        <th>TALEP TARİHİ</th>
+                        <th class="text-end pe-4">İŞLEMLER</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (!Model.Any())
+                    {
+                        <tr>
+                            <td colspan="4" class="text-center py-5 text-white-50">Şu an onay bekleyen herhangi bir talep bulunmuyor.</td>
+                        </tr>
+                    }
+                    @foreach (var sub in Model)
+                    {
+                        var durationMonths = (sub.EndDate.Year - sub.StartDate.Year) * 12 + sub.EndDate.Month - sub.StartDate.Month;
+                        <tr>
+                            <td class="ps-4">
+                                <div class="fw-bold">@sub.User?.FirstName @sub.User?.LastName</div>
+                                <div class="small text-white-50">@sub.User?.Email</div>
+                            </td>
+                            <td><span class="badge bg-outline-warning text-warning border border-warning">@durationMonths Ay</span></td>
+                            <td class="small">@sub.CreatedAt.ToString("dd.MM.yyyy HH:mm")</td>
+                            <td class="text-end pe-4">
+                                <form asp-action="Approve" method="post" style="display:inline;">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="id" value="@sub.Id" />
+                                    <button type="submit" class="btn btn-success btn-sm fw-bold px-3">
+                                        <i class="bi bi-check-lg me-1"></i> ONAYLA
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

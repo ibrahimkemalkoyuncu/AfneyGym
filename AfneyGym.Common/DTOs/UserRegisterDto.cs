@@ -24,14 +24,3 @@ public record UserRegisterDto
     [Compare("Password", ErrorMessage = "Şifreler eşleşmiyor.")]
     public string ConfirmPassword { get; init; } = string.Empty;
 }
-
-// Giriş sırasında kullanılan model
-public record UserLoginDto
-{
-    [Required(ErrorMessage = "E-posta gereklidir.")]
-    [EmailAddress]
-    public string Email { get; init; } = string.Empty;
-
-    [Required(ErrorMessage = "Şifre gereklidir.")]
-    public string Password { get; init; } = string.Empty;
-}

@@ -6,6 +6,7 @@ public class DashboardSummaryDto
     public int ActiveSubscriptions { get; set; }
     public int TotalTrainers { get; set; }
     public int TodayLessonsCount { get; set; }
+    public int PendingSubscriptionCount { get; set; } // Yeni: Onay bekleyen ödemeler
 
     // Entity yerine DTO listeleri kullanılarak CS0246 hataları çözüldü
     public List<RecentMemberDto> RecentMembers { get; set; } = new();
@@ -25,6 +26,6 @@ public class TodaysLessonDto
     public string Name { get; set; } = string.Empty;
     public string TrainerName { get; set; } = string.Empty;
     public DateTime StartTime { get; set; }
-    public int AttendeeCount { get; set; }
     public int Capacity { get; set; }
+    public int AttendeeCount { get; set; }
 }

@@ -137,26 +137,71 @@ public class AdminController : Controller
     [HttpGet]
     public IActionResult CreateTrainer() => View();
 
+    //[HttpPost]
+    //[ValidateAntiForgeryToken]
+    //public async Task<IActionResult> CreateTrainer(Trainer trainer, IFormFile? imageFile)
+    //{
+    //    if (ModelState.IsValid)
+    //    {
+
+    //        // Email Mükerrerlik Kontrolü
+    //        var exists = await _context.Trainers.AnyAsync(t => t.Email == trainer.Email && !t.IsDeleted);
+    //        if (exists)
+    //        {
+    //            ModelState.AddModelError("Email", "Bu e-posta adresiyle kayıtlı bir eğitmen zaten var.");
+    //            return View(trainer);
+    //        }
+
+    //        if (imageFile != null && imageFile.Length > 0)
+    //        {
+    //            var extension = Path.GetExtension(imageFile.FileName).ToLower();
+    //            string uniqueFileName = $"{Guid.NewGuid()}{extension}";
+    //            string uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "uploads", "trainers");
+
+    //            if (!Directory.Exists(uploadsFolder)) Directory.CreateDirectory(uploadsFolder);
+
+    //            string filePath = Path.Combine(uploadsFolder, uniqueFileName);
+    //            using (var fileStream = new FileStream(filePath, FileMode.Create))
+    //            {
+    //                await imageFile.CopyToAsync(fileStream);
+    //            }
+    //            trainer.ImageUrl = $"/uploads/trainers/{uniqueFileName}";
+    //        }
+    //        else
+    //        {
+    //            trainer.ImageUrl = "/img/default-trainer.png";
+    //        }
+
+    //        await _trainerService.CreateAsync(trainer);
+    //        return RedirectToAction(nameof(Trainers));
+    //    }
+    //    return View(trainer);
+    //}
+
+
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> CreateTrainer(Trainer trainer, IFormFile? imageFile)
     {
         if (ModelState.IsValid)
         {
+            // Email Mükerrerlik Kontrolü
+            var exists = await _context.Trainers.AnyAsync(t => t.Email == trainer.Email && !t.IsDeleted);
+            if (exists)
+            {
+                ModelState.AddModelError("Email", "Bu e-posta adresiyle kayıtlı bir eğitmen zaten var.");
+                return View(trainer);
+            }
+
             if (imageFile != null && imageFile.Length > 0)
             {
-                var extension = Path.GetExtension(imageFile.FileName).ToLower();
-                string uniqueFileName = $"{Guid.NewGuid()}{extension}";
-                string uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "uploads", "trainers");
-
+                string uniqueFileName = Guid.NewGuid().ToString() + Path.GetExtension(imageFile.FileName);
+                string uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "uploads/trainers");
                 if (!Directory.Exists(uploadsFolder)) Directory.CreateDirectory(uploadsFolder);
 
                 string filePath = Path.Combine(uploadsFolder, uniqueFileName);
-                using (var fileStream = new FileStream(filePath, FileMode.Create))
-                {
-                    await imageFile.CopyToAsync(fileStream);
-                }
-                trainer.ImageUrl = $"/uploads/trainers/{uniqueFileName}";
+                using (var fileStream = new FileStream(filePath, FileMode.Create)) { await imageFile.CopyToAsync(fileStream); }
+                trainer.ImageUrl = "/uploads/trainers/" + uniqueFileName;
             }
             else
             {
@@ -168,6 +213,98 @@ public class AdminController : Controller
         }
         return View(trainer);
     }
+
+
+    // --- YENİ: EĞİTMEN DÜZENLEME (GET) ---
+    [HttpGet]
+    public async Task<IActionResult> EditTrainer(Guid id)
+    {
+        var trainer = await _trainerService.GetByIdAsync(id);
+        if (trainer == null) return NotFound();
+        return View(trainer);
+    }
+
+    // --- YENİ: EĞİTMEN DÜZENLEME (POST) ---
+    //[HttpPost]
+    //[ValidateAntiForgeryToken]
+    //public async Task<IActionResult> EditTrainer(Trainer trainer, IFormFile? imageFile)
+    //{
+    //    if (ModelState.IsValid)
+    //    {
+    //        var existingTrainer = await _trainerService.GetByIdAsync(trainer.Id);
+    //        if (existingTrainer == null) return NotFound();
+
+    //        if (imageFile != null && imageFile.Length > 0)
+    //        {
+    //            // Eski resmi sil (Default değilse)
+    //            if (!string.IsNullOrEmpty(existingTrainer.ImageUrl) && !existingTrainer.ImageUrl.Contains("default-trainer.png"))
+    //            {
+    //                var oldPath = Path.Combine(_webHostEnvironment.WebRootPath, existingTrainer.ImageUrl.TrimStart('/'));
+    //                if (System.IO.File.Exists(oldPath)) System.IO.File.Delete(oldPath);
+    //            }
+
+    //            string uniqueFileName = Guid.NewGuid().ToString() + Path.GetExtension(imageFile.FileName);
+    //            string filePath = Path.Combine(_webHostEnvironment.WebRootPath, "uploads/trainers", uniqueFileName);
+    //            using (var fileStream = new FileStream(filePath, FileMode.Create)) { await imageFile.CopyToAsync(fileStream); }
+    //            existingTrainer.ImageUrl = "/uploads/trainers/" + uniqueFileName;
+    //        }
+
+    //        existingTrainer.FullName = trainer.FullName;
+    //        existingTrainer.Specialty = trainer.Specialty;
+    //        existingTrainer.Bio = trainer.Bio;
+    //        existingTrainer.UpdatedAt = DateTime.Now;
+
+    //        await _trainerService.UpdateAsync(existingTrainer);
+    //        return RedirectToAction(nameof(Trainers));
+    //    }
+    //    return View(trainer);
+    //}
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> EditTrainer(Trainer trainer, IFormFile? imageFile)
+    {
+        if (ModelState.IsValid)
+        {
+            var existingTrainer = await _trainerService.GetByIdAsync(trainer.Id);
+            if (existingTrainer == null) return NotFound();
+
+            // Email Mükerrerlik Kontrolü (Kendisi hariç)
+            var exists = await _context.Trainers.AnyAsync(t => t.Email == trainer.Email && t.Id != trainer.Id && !t.IsDeleted);
+            if (exists)
+            {
+                ModelState.AddModelError("Email", "Bu e-posta adresi başka bir eğitmen tarafından kullanılıyor.");
+                return View(trainer);
+            }
+
+            if (imageFile != null && imageFile.Length > 0)
+            {
+                // Eski resmi sil
+                if (!string.IsNullOrEmpty(existingTrainer.ImageUrl) && !existingTrainer.ImageUrl.Contains("default-trainer.png"))
+                {
+                    var oldPath = Path.Combine(_webHostEnvironment.WebRootPath, existingTrainer.ImageUrl.TrimStart('/'));
+                    if (System.IO.File.Exists(oldPath)) System.IO.File.Delete(oldPath);
+                }
+
+                string uniqueFileName = Guid.NewGuid().ToString() + Path.GetExtension(imageFile.FileName);
+                string filePath = Path.Combine(_webHostEnvironment.WebRootPath, "uploads/trainers", uniqueFileName);
+                using (var fileStream = new FileStream(filePath, FileMode.Create)) { await imageFile.CopyToAsync(fileStream); }
+                existingTrainer.ImageUrl = "/uploads/trainers/" + uniqueFileName;
+            }
+
+            // Veri Güncelleme
+            existingTrainer.FullName = trainer.FullName;
+            existingTrainer.Email = trainer.Email; // GÜNCELLENDİ
+            existingTrainer.Specialty = trainer.Specialty;
+            existingTrainer.Bio = trainer.Bio;
+            existingTrainer.UpdatedAt = DateTime.Now;
+
+            await _trainerService.UpdateAsync(existingTrainer);
+            return RedirectToAction(nameof(Trainers));
+        }
+        return View(trainer);
+    }
+
 
     [HttpPost]
     [ValidateAntiForgeryToken]

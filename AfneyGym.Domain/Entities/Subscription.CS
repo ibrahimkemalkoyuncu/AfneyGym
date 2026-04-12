@@ -28,10 +28,12 @@ public class Subscription : BaseEntity
     public DateTime? FreezeDate { get; set; }
 }
 
+
 public enum SubscriptionStatus
 {
-    Active = 1,     // Aktif ve kullanılabilir
-    Expired = 2,    // Süresi dolmuş
-    Canceled = 3,   // İptal edilmiş
-    Pending = 4     // Ödeme bekliyor veya onay bekliyor
+    Pending = 1,    // Ödeme/Onay bekliyor
+    Active = 2,     // Onaylanmış ve süresi devam ediyor
+    Rejected = 3,   // Ödeme teyit edilemedi, reddedildi
+    Expired = 4,    // Süresi dolmuş
+    Canceled = 5    // Kullanıcı veya Admin tarafından iptal edildi
 }
