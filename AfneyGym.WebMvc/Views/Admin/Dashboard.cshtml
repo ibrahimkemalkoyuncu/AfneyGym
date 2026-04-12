@@ -5,104 +5,91 @@
 }
 
 <style>
-    /* İstatistik Kartları */
-    .stat-card { background: #111; border: 1px solid #222; border-radius: 15px; padding: 25px; transition: 0.3s; border-left: 5px solid #e31e24; }
-    .stat-card:hover { transform: translateY(-5px); border-color: #e31e24; }
+    .stat-card { background: #111; border: 1px solid #222; border-radius: 15px; padding: 25px; transition: 0.3s; }
+    .stat-card:hover { transform: translateY(-5px); border-color: #0ea5e9; }
     .stat-value { font-size: 2.2rem; font-weight: 800; color: #fff; line-height: 1; margin-bottom: 5px; }
-    .stat-label { color: #aaa; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 1px; font-weight: 600; }
-    
-    /* Tablo Kartları */
-    .dashboard-table-card { background: #111; border: 1px solid #222; border-radius: 15px; overflow: hidden; height: 100%; border-top: 1px solid #333; }
-    .table-header { padding: 20px; border-bottom: 1px solid #222; background: #161616; display: flex; justify-content: space-between; align-items: center; }
-    .table-dark { --bs-table-bg: transparent; }
-    .table thead th { border-bottom: 1px solid #222; color: #555; font-weight: 700; }
-    .table td { border-bottom: 1px solid #1a1a1a; vertical-align: middle; padding: 15px 10px; }
-    
-    /* Doluluk Badge */
-    .occupancy-badge { font-size: 0.7rem; padding: 5px 10px; border-radius: 6px; font-weight: 700; }
+    .stat-label { color: #94a3b8; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 1px; font-weight: 700; }
+    .dashboard-table-card { background: #111; border: 1px solid #222; border-radius: 15px; overflow: hidden; height: 100%; }
+    .occupancy-badge { font-size: 0.7rem; padding: 5px 10px; border-radius: 999px; font-weight: 700; }
 </style>
 
-<div class="container-fluid">
-    <div class="mb-4 d-flex justify-content-between align-items-end">
+<div>
+    <div class="mb-4 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
         <div>
-            <h2 class="fw-bold text-uppercase m-0">SİSTEM <span class="text-danger">ÖZETİ</span></h2>
-            <p class="text-white-50 m-0 small">Veritabanından çekilen gerçek zamanlı operasyonel veriler.</p>
+            <h2 class="m-0 text-3xl font-black uppercase">SİSTEM <span class="text-accent">ÖZETİ</span></h2>
+            <p class="m-0 text-sm text-slate-400">Veritabanından çekilen gerçek zamanlı operasyonel veriler.</p>
         </div>
-        <div class="text-white-50 small">
-            <i class="bi bi-clock-history me-1"></i> Son Güncelleme: @DateTime.Now.ToString("HH:mm")
+        <div class="text-sm text-slate-400">
+            <i class="bi bi-clock-history mr-1"></i> Son Güncelleme: @DateTime.Now.ToString("HH:mm")
         </div>
     </div>
 
-    @* --- İSTATİSTİK KARTLARI --- *@
-    <div class="row g-4 mb-5">
-        <div class="col-md-3">
-            <div class="stat-card shadow-sm">
+    <div class="mb-5 grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-5">
+        <div>
+            <div class="stat-card border-l-4 border-accent shadow-sm">
                 <div class="stat-label">Toplam Üye</div>
                 <div class="stat-value">@Model.TotalMembers</div>
-                <div class="small text-white-50"><i class="bi bi-person-check me-1"></i> Sadece Üye Rolü</div>
+                <div class="text-xs text-slate-400"><i class="bi bi-person-check mr-1"></i> Sadece Üye Rolü</div>
             </div>
         </div>
 
-        <div class="col-md-3">
-            <div class="stat-card shadow-sm border-warning">
+        <div>
+            <div class="stat-card border-l-4 border-amber-400 shadow-sm">
                 <div class="stat-label">Bekleyen Ödemeler</div>
-                <div class="stat-value text-warning">@Model.PendingSubscriptionCount</div>
-                <a asp-controller="Subscription" asp-action="ManageRequests" class="small text-warning text-decoration-none">Yönetmek için tıkla →</a>
+                <div class="stat-value text-amber-400">@Model.PendingSubscriptionCount</div>
+                <a asp-controller="Subscription" asp-action="ManageRequests" class="text-xs font-semibold text-amber-300 hover:text-amber-200">Yönetmek için tıkla -&gt;</a>
             </div>
         </div>
 
-        <div class="col-md-3">
-            <div class="stat-card shadow-sm" style="border-left-color: #198754;">
+        <div>
+            <div class="stat-card border-l-4 border-emerald-500 shadow-sm">
                 <div class="stat-label">Aktif Abonelik</div>
                 <div class="stat-value">@Model.ActiveSubscriptions</div>
-                <div class="small text-white-50"><i class="bi bi-credit-card me-1"></i> Süresi Dolmamış</div>
+                <div class="text-xs text-slate-400"><i class="bi bi-credit-card mr-1"></i> Süresi Dolmamış</div>
             </div>
         </div>
 
-        <div class="col-md-3">
-            <div class="stat-card shadow-sm" style="border-left-color: #0dcaf0;">
+        <div>
+            <div class="stat-card border-l-4 border-cyan-400 shadow-sm">
                 <div class="stat-label">Eğitmenler</div>
                 <div class="stat-value">@Model.TotalTrainers</div>
-                <div class="small text-white-50"><i class="bi bi-award me-1"></i> Aktif Kadro</div>
+                <div class="text-xs text-slate-400"><i class="bi bi-award mr-1"></i> Aktif Kadro</div>
             </div>
         </div>
 
-        <div class="col-md-3">
-            <div class="stat-card shadow-sm" style="border-left-color: #ffc107;">
+        <div>
+            <div class="stat-card border-l-4 border-yellow-400 shadow-sm">
                 <div class="stat-label">Bugünkü Dersler</div>
                 <div class="stat-value">@Model.TodayLessonsCount</div>
-                <div class="small text-white-50"><i class="bi bi-calendar-event me-1"></i> @DateTime.Today.ToString("dd MMMM")</div>
+                <div class="text-xs text-slate-400"><i class="bi bi-calendar-event mr-1"></i> @DateTime.Today.ToString("dd MMMM")</div>
             </div>
         </div>
-
     </div>
 
-    @* --- TABLO BÖLÜMÜ --- *@
-    <div class="row g-4">
-        @* SOL: Son 5 Kayıt *@
-        <div class="col-lg-5">
+    <div class="grid grid-cols-1 gap-4 lg:grid-cols-12">
+        <div class="lg:col-span-5">
             <div class="dashboard-table-card shadow">
-                <div class="table-header">
-                    <h6 class="m-0 fw-bold text-white"><i class="bi bi-person-plus me-2 text-danger"></i>YENİ ÜYELER</h6>
-                    <a asp-action="Members" class="btn btn-dark btn-sm border-secondary fw-bold small">TÜMÜ</a>
+                <div class="flex items-center justify-between border-b border-slate-800 bg-panelSoft/40 px-5 py-4">
+                    <h6 class="m-0 text-sm font-extrabold text-white"><i class="bi bi-person-plus mr-2 text-accent"></i>YENİ ÜYELER</h6>
+                    <a asp-action="Members" class="inline-flex items-center rounded-lg border border-slate-500 px-3 py-1 text-xs font-semibold text-slate-200 hover:bg-panelSoft">TÜMÜ</a>
                 </div>
-                <div class="table-responsive">
-                    <table class="table table-dark table-hover mb-0">
-                        <thead>
-                            <tr class="small">
-                                <th class="ps-4">AD SOYAD / E-POSTA</th>
-                                <th class="text-end pe-4">TARİH</th>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-slate-700/60 text-sm">
+                        <thead class="bg-panelSoft">
+                            <tr class="text-left text-xs uppercase tracking-wide text-slate-400">
+                                <th class="px-5 py-3">AD SOYAD / E-POSTA</th>
+                                <th class="px-5 py-3 text-right">TARİH</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody class="divide-y divide-slate-800/70">
                             @foreach (var member in Model.RecentMembers)
                             {
-                                <tr>
-                                    <td class="ps-4">
-                                        <div class="text-white fw-bold">@member.FullName</div>
-                                        <div class="small text-white-50">@member.Email</div>
+                                <tr class="hover:bg-slate-800/40">
+                                    <td class="px-5 py-4">
+                                        <div class="font-semibold text-white">@member.FullName</div>
+                                        <div class="text-xs text-slate-400">@member.Email</div>
                                     </td>
-                                    <td class="text-end pe-4 small text-white-50">@member.CreatedAt.ToString("dd.MM.yyyy")</td>
+                                    <td class="px-5 py-4 text-right text-slate-400">@member.CreatedAt.ToString("dd.MM.yyyy")</td>
                                 </tr>
                             }
                         </tbody>
@@ -111,39 +98,38 @@
             </div>
         </div>
 
-        @* SAĞ: Günlük Akış *@
-        <div class="col-lg-7">
+        <div class="lg:col-span-7">
             <div class="dashboard-table-card shadow">
-                <div class="table-header">
-                    <h6 class="m-0 fw-bold text-white"><i class="bi bi-lightning-charge me-2 text-warning"></i>BUGÜNÜN AKIŞI</h6>
-                    <a asp-action="Lessons" class="btn btn-dark btn-sm border-secondary fw-bold small">YÖNET</a>
+                <div class="flex items-center justify-between border-b border-slate-800 bg-panelSoft/40 px-5 py-4">
+                    <h6 class="m-0 text-sm font-extrabold text-white"><i class="bi bi-lightning-charge mr-2 text-amber-300"></i>BUGÜNÜN AKIŞI</h6>
+                    <a asp-action="Lessons" class="inline-flex items-center rounded-lg border border-slate-500 px-3 py-1 text-xs font-semibold text-slate-200 hover:bg-panelSoft">YÖNET</a>
                 </div>
-                <div class="table-responsive">
-                    <table class="table table-dark table-hover mb-0">
-                        <thead>
-                            <tr class="small">
-                                <th class="ps-4">DERS / EĞİTMEN</th>
-                                <th>SAAT</th>
-                                <th class="text-end pe-4">DOLULUK</th>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-slate-700/60 text-sm">
+                        <thead class="bg-panelSoft">
+                            <tr class="text-left text-xs uppercase tracking-wide text-slate-400">
+                                <th class="px-5 py-3">DERS / EĞİTMEN</th>
+                                <th class="px-5 py-3">SAAT</th>
+                                <th class="px-5 py-3 text-right">DOLULUK</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody class="divide-y divide-slate-800/70">
                             @if (!Model.TodaysLessons.Any())
                             {
                                 <tr>
-                                    <td colspan="3" class="text-center py-4 text-white-50 small italic">Bugün için planlanmış bir antrenman bulunmuyor.</td>
+                                    <td colspan="3" class="px-5 py-6 text-center text-slate-400">Bugün için planlanmış bir antrenman bulunmuyor.</td>
                                 </tr>
                             }
                             @foreach (var lesson in Model.TodaysLessons)
                             {
-                                <tr>
-                                    <td class="ps-4">
-                                        <div class="text-white fw-bold">@lesson.Name</div>
-                                        <div class="small text-white-50">@lesson.TrainerName</div>
+                                <tr class="hover:bg-slate-800/40">
+                                    <td class="px-5 py-4">
+                                        <div class="font-semibold text-white">@lesson.Name</div>
+                                        <div class="text-xs text-slate-400">@lesson.TrainerName</div>
                                     </td>
-                                    <td class="small fw-bold">@lesson.StartTime.ToString("HH:mm")</td>
-                                    <td class="text-end pe-4">
-                                        <span class="occupancy-badge @(lesson.AttendeeCount >= lesson.Capacity ? "bg-secondary" : "bg-danger")">
+                                    <td class="px-5 py-4 font-semibold text-slate-200">@lesson.StartTime.ToString("HH:mm")</td>
+                                    <td class="px-5 py-4 text-right">
+                                        <span class="occupancy-badge @(lesson.AttendeeCount >= lesson.Capacity ? "bg-slate-500 text-white" : "bg-accent text-slate-900")">
                                             @lesson.AttendeeCount / @lesson.Capacity
                                         </span>
                                     </td>

@@ -4,22 +4,35 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - AfneyGym Admin</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        gymbg: "#0b1020",
+                        panel: "#121a2f",
+                        panelSoft: "#1a2440",
+                        accent: "#0ea5e9"
+                    }
+                }
+            }
+        };
+    </script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="~/css/admin.css" />
     <style>
-        :root { --sidebar-width: 260px; --gym-red: #dc3545; }
-        body { background-color: #0b0b0b; color: #fff; }
+        :root { --sidebar-width: 260px; }
+        body { background-color: #0b1020; color: #fff; }
         .sidebar { 
             width: var(--sidebar-width); 
             height: 100vh; 
             position: fixed; 
-            background: #111; 
-            border-right: 1px solid #222;
+            background: #121a2f; 
+            border-right: 1px solid rgba(148, 163, 184, 0.25);
             padding-top: 20px;
         }
         .nav-link { 
-            color: #aaa; 
+            color: #cbd5e1; 
             padding: 12px 25px; 
             display: flex; 
             align-items: center; 
@@ -28,23 +41,22 @@
         }
         .nav-link:hover, .nav-link.active { 
             color: #fff; 
-            background: #1a1a1a; 
-            border-left-color: var(--gym-red);
+            background: #1a2440; 
+            border-left-color: #0ea5e9;
         }
         .nav-link i { margin-right: 15px; font-size: 1.2rem; }
-        .main-content { margin-left: var(--sidebar-width); padding: 30px; }
-        .badge-pending { font-size: 0.7rem; padding: 3px 6px; }
+        .main-content { margin-left: var(--sidebar-width); padding: 30px; max-width: 1200px; }
     </style>
 </head>
-<body>
+<body class="bg-gymbg">
 
     <aside class="sidebar">
-        <div class="px-4 mb-4">
-            <h4 class="fw-bold text-white"><span class="text-danger">AFNEY</span>GYM</h4>
-            <small class="text-white-50">Admin Kontrol Paneli</small>
+        <div class="mb-4 px-4">
+            <h4 class="text-white"><span class="font-black text-accent">AFNEY</span><span class="font-black">GYM</span></h4>
+            <small class="text-slate-400">Admin Kontrol Paneli</small>
         </div>
 
-        <nav class="nav flex-column">
+        <nav class="flex flex-col">
             <a class="nav-link @(ViewContext.RouteData.Values["Action"]?.ToString() == "Dashboard" ? "active" : "")" 
                asp-controller="Admin" asp-action="Dashboard">
                 <i class="bi bi-speedometer2"></i> Dashboard
@@ -71,8 +83,8 @@
                 <i class="bi bi-calendar-event"></i> Ders Programı
             </a>
 
-            <div class="mt-auto border-top border-secondary pt-2">
-                <a class="nav-link text-danger" asp-controller="Account" asp-action="Logout">
+            <div class="mt-auto border-t border-slate-600 pt-2">
+                <a class="nav-link text-rose-300" asp-controller="Account" asp-action="Logout">
                     <i class="bi bi-box-arrow-right"></i> Çıkış Yap
                 </a>
             </div>
@@ -84,7 +96,7 @@
     </main>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/preline@2.5.0/dist/preline.min.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

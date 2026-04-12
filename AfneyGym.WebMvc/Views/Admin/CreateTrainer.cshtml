@@ -17,33 +17,36 @@
         cursor: pointer;
     }
     .member-row:hover { border-color: #444; }
-    .member-row.selected { border-color: #198754; background: #0a1a11; }
+    .member-row.selected { border-color: #22c55e; background: #0a1a11; }
     
     /* Gizli checkbox ama tüm satır tıklanabilir */
     .attendance-check { display: none; }
     
     .status-icon { font-size: 1.5rem; color: #333; }
-    .selected .status-icon { color: #198754; }
+    .selected .status-icon { color: #22c55e; }
 </style>
 
-<div class="container py-4 attendance-container">
+<div class="attendance-container py-4">
     <div class="mb-4">
-        <div class="d-flex justify-content-between align-items-end mb-2">
+        <div class="mb-2 flex items-end justify-between gap-3">
             <div>
-                <h2 class="fw-bold text-white m-0">@Model.Name.ToUpper()</h2>
-                <p class="text-white-50 m-0"><i class="bi bi-clock me-1"></i> @Model.StartTime.ToString("HH:mm") - @Model.EndTime.ToString("HH:mm")</p>
+                <h2 class="m-0 text-2xl font-black uppercase text-white">@Model.Name</h2>
+                <p class="m-0 text-sm text-slate-400"><i class="bi bi-clock mr-1"></i> @Model.StartTime.ToString("HH:mm") - @Model.EndTime.ToString("HH:mm")</p>
             </div>
-            <div class="text-end">
-                <span class="badge bg-danger">@attendeeCount / @Model.Capacity Kişi</span>
+            <div class="text-right">
+                <span class="inline-flex rounded-full bg-accent px-3 py-1 text-xs font-bold text-slate-900">@attendeeCount / @Model.Capacity Kişi</span>
             </div>
         </div>
-        <div class="progress bg-dark" style="height: 6px;">
-            <div class="progress-bar bg-danger" style="width: @( (attendeeCount * 100) / Model.Capacity )%"></div>
+        <div class="h-2 rounded-full bg-slate-800">
+            <div class="h-full rounded-full bg-accent" style="width: @( (attendeeCount * 100) / Model.Capacity )%"></div>
         </div>
     </div>
 
     <div class="mb-3">
-        <input type="text" id="memberFilter" class="form-control bg-dark border-secondary text-white" placeholder="Üye ismine göre ara...">
+        <div class="relative">
+            <i class="bi bi-search pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-500"></i>
+            <input type="text" id="memberFilter" class="w-full rounded-xl border border-slate-700 bg-slate-950 py-3 pl-10 pr-4 text-sm text-white outline-none ring-0 placeholder:text-slate-500 focus:border-accent" placeholder="Üye ismine göre ara...">
+        </div>
     </div>
 
     <form asp-action="SubmitAttendance" method="post" id="attendanceForm">
@@ -55,15 +58,15 @@
             {
                 @foreach (var attendee in Model.Attendees)
                 {
-                    <div class="member-row d-flex align-items-center justify-content-between @(attendee.IsAttended ? "selected" : "")" 
+                    <div class="member-row flex items-center justify-between @(attendee.IsAttended ? "selected" : "")" 
                          onclick="toggleMember(this)">
-                        <div class="d-flex align-items-center">
-                            <div class="rounded-circle bg-secondary d-flex align-items-center justify-content-center me-3" style="width: 45px; height: 45px;">
-                                <span class="fw-bold">@attendee.User.FirstName[0]@attendee.User.LastName[0]</span>
+                        <div class="flex items-center">
+                            <div class="mr-3 flex h-11 w-11 items-center justify-center rounded-full bg-slate-700">
+                                <span class="text-sm font-bold text-slate-100">@attendee.User.FirstName[0]@attendee.User.LastName[0]</span>
                             </div>
                             <div>
-                                <h6 class="m-0 fw-bold text-white">@attendee.User.FirstName @attendee.User.LastName</h6>
-                                <small class="text-white-50">@attendee.User.Email</small>
+                                <h6 class="m-0 text-sm font-bold text-white">@attendee.User.FirstName @attendee.User.LastName</h6>
+                                <small class="text-slate-400">@attendee.User.Email</small>
                             </div>
                         </div>
                         <div class="status-icon">
@@ -77,18 +80,18 @@
             }
             else
             {
-                <div class="text-center py-5 text-white-50">
-                    <i class="bi bi-person-x h1 d-block mb-3"></i>
+                <div class="py-10 text-center text-slate-400">
+                    <i class="bi bi-person-x mb-3 block text-4xl"></i>
                     Bu ders için henüz bir katılım kaydı bulunmuyor.
                 </div>
             }
         </div>
 
-        <div class="fixed-bottom p-3 bg-black border-top border-secondary text-center" style="z-index: 1030;">
-            <div class="container attendance-container">
-                <div class="d-flex gap-2">
-                    <a asp-action="MyLessons" class="btn btn-outline-light w-50 fw-bold">VAZGEÇ</a>
-                    <button type="submit" class="btn btn-danger w-50 fw-bold">YOKLAMAYI KAYDET</button>
+        <div class="fixed bottom-0 left-0 right-0 z-30 border-t border-slate-700 bg-gymbg/95 p-3 text-center backdrop-blur">
+            <div class="attendance-container">
+                <div class="flex gap-2">
+                    <a asp-action="MyLessons" class="inline-flex w-1/2 items-center justify-center rounded-lg border border-slate-500 px-4 py-3 text-sm font-bold text-slate-200 hover:bg-panelSoft">VAZGEÇ</a>
+                    <button type="submit" class="inline-flex w-1/2 items-center justify-center rounded-lg bg-accent px-4 py-3 text-sm font-bold text-slate-900 hover:bg-sky-300">YOKLAMAYI KAYDET</button>
                 </div>
             </div>
         </div>

@@ -4,44 +4,48 @@
     ViewData["Title"] = "Giriş Yap";
 }
 
-<style>
-    .auth-card { background: #111; border: 1px solid #222; border-radius: 20px; padding: 40px; }
-    .auth-input { background: #1a1a1a !important; border: 1px solid #333 !important; color: white !important; padding: 12px; }
-    .auth-input:focus { border-color: #e31e24 !important; box-shadow: 0 0 0 0.25rem rgba(227, 30, 36, 0.1) !important; }
-</style>
+<div class="mx-auto flex min-h-[72vh] max-w-xl items-center">
+    <div class="w-full rounded-2xl border border-slate-700/60 bg-panel p-8 shadow-2xl shadow-black/30">
+        <div class="mb-6 text-center">
+            <h2 class="text-3xl font-black uppercase text-white">Giriş <span class="text-accent">Yap</span></h2>
+            <p class="mt-2 text-sm text-slate-400">Sınırlarını zorlamak için aramıza dön.</p>
+        </div>
 
-<div class="row justify-content-center align-items-center" style="min-height: 80vh;">
-    <div class="col-md-5">
-        <div class="auth-card shadow-lg">
-            <div class="text-center mb-4">
-                <h2 class="fw-bold text-white text-uppercase">Giriş <span class="text-danger">Yap</span></h2>
-                <p class="text-white-50">Sınırlarını zorlamak için aramıza dön.</p>
+        <form asp-action="Login" method="post" asp-antiforgery="true" class="space-y-5">
+            <div asp-validation-summary="ModelOnly" class="rounded-lg border border-rose-400/30 bg-rose-500/10 p-3 text-sm text-rose-200"></div>
+
+            <div>
+                <label asp-for="Email" class="mb-2 block text-xs font-semibold uppercase tracking-wide text-slate-400">E-Posta</label>
+                <div class="relative">
+                    <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-slate-500">
+                        <i class="bi bi-envelope"></i>
+                    </div>
+                    <input asp-for="Email" class="block w-full rounded-lg border border-slate-600 bg-panelSoft py-3 pl-10 pr-3 text-sm text-white placeholder-slate-500 focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30" placeholder="ornek@mail.com" />
+                </div>
+                <span asp-validation-for="Email" class="mt-1 block text-xs text-rose-300"></span>
             </div>
 
-            <form asp-action="Login" method="post" asp-antiforgery="true">
-                @* REGRESSION CHECK: Controller'dan gelen hata mesajları burada gösterilir *@
-                <div asp-validation-summary="ModelOnly" class="text-danger small mb-3"></div>
-
-                <div class="mb-3">
-                    <label asp-for="Email" class="form-label text-white-50 small text-uppercase">E-Posta</label>
-                    <input asp-for="Email" class="form-control auth-input" placeholder="ornek@mail.com" />
-                    <span asp-validation-for="Email" class="text-danger small"></span>
+            <div>
+                <label asp-for="Password" class="mb-2 block text-xs font-semibold uppercase tracking-wide text-slate-400">Şifre</label>
+                <div class="relative">
+                    <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-slate-500">
+                        <i class="bi bi-shield-lock"></i>
+                    </div>
+                    <input asp-for="Password" type="password" class="block w-full rounded-lg border border-slate-600 bg-panelSoft py-3 pl-10 pr-3 text-sm text-white placeholder-slate-500 focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30" placeholder="••••••••" />
                 </div>
+                <span asp-validation-for="Password" class="mt-1 block text-xs text-rose-300"></span>
+            </div>
 
-                <div class="mb-4">
-                    <label asp-for="Password" class="form-label text-white-50 small text-uppercase">Şifre</label>
-                    <input asp-for="Password" type="password" class="form-control auth-input" placeholder="••••••••" />
-                    <span asp-validation-for="Password" class="text-danger small"></span>
-                </div>
+            <button type="submit" class="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-accent px-4 py-3 text-sm font-bold text-slate-900 transition hover:bg-sky-300">
+                <i class="bi bi-box-arrow-in-right"></i> GİRİŞ YAP
+            </button>
 
-                <button type="submit" class="btn btn-danger w-100 fw-bold py-2 mb-3 shadow">GİRİŞ YAP</button>
-
-                <div class="text-center">
-                    <p class="text-white-50 small">Hesabın yok mu? <a asp-action="Register" class="text-danger text-decoration-none fw-bold">Hemen Kayıt Ol</a></p>
-                </div>
-            </form>
+            <div class="text-center text-sm text-slate-400">
+                Hesabın yok mu?
+                <a asp-action="Register" class="font-semibold text-accent hover:text-sky-300">Hemen Kayıt Ol</a>
+            </div>
+        </form>
         </div>
-    </div>
 </div>
 
 @section Scripts {
