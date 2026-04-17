@@ -1,0 +1,81 @@
+﻿@using AfneyGym.Domain.Entities
+@model List<Lesson>
+@{
+    ViewData["Title"] = "Ders Yönetimi";
+}
+
+<div>
+    <div class="mb-5 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+        <h2 class="text-3xl font-black uppercase tracking-wide">DERS <span class="text-accent">YÖNETİMİ</span></h2>
+        <a asp-action="OwnerCreateLesson" class="inline-flex items-center justify-center gap-2 rounded-lg bg-accent px-4 py-2 text-sm font-semibold text-slate-900 hover:bg-sky-300">
+            <i class="bi bi-plus-circle-fill"></i> YENİ DERS
+        </a>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="rounded-lg border border-slate-700/60 bg-panel p-6 text-center">
+            <p class="text-slate-400">Henüz ders bulunmuyor.</p>
+        </div>
+    }
+    else
+    {
+        <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+            @foreach (var lesson in Model)
+            {
+                var attendeeCount = lesson.Attendees.Count(a => !a.IsDeleted);
+                var spotsLeft = lesson.Capacity - attendeeCount;
+                var isFull = spotsLeft <= 0;
+                var percentFull = lesson.Capacity > 0 ? ((decimal)attendeeCount / lesson.Capacity) * 100 : 0;
+
+                <div class="rounded-xl border border-slate-700/60 bg-panel p-5 shadow-lg">
+                    <div class="mb-3 flex items-start justify-between">
+                        <div>
+                            <h3 class="text-lg font-bold text-white">@lesson.Name</h3>
+                            <p class="text-xs text-slate-400">@lesson.Trainer?.FullName</p>
+                        </div>
+                        @if (isFull)
+                        {
+                            <span class="inline-flex rounded-full bg-rose-500/20 px-2 py-1 text-xs font-bold text-rose-300">DOLDU</span>
+                        }
+                        else if (spotsLeft <= 2)
+                        {
+                            <span class="inline-flex rounded-full bg-amber-500/20 px-2 py-1 text-xs font-bold text-amber-300">AZ KALDI</span>
+                        }
+                        else
+                        {
+                            <span class="inline-flex rounded-full bg-emerald-500/20 px-2 py-1 text-xs font-bold text-emerald-300">BOŞ</span>
+                        }
+                    </div>
+
+                    <p class="mb-3 text-sm text-slate-300">@lesson.Description</p>
+
+                    <div class="mb-3 space-y-2">
+                        <div class="flex items-center gap-2 text-xs text-slate-400">
+                            <i class="bi bi-calendar-event"></i>
+                            <span>@lesson.StartTime.ToString("dd.MM.yyyy HH:mm") - @lesson.EndTime.ToString("HH:mm")</span>
+                        </div>
+                        <div class="flex items-center gap-2 text-xs text-slate-400">
+                            <i class="bi bi-people"></i>
+                            <span>@attendeeCount / @lesson.Capacity katılımcı</span>
+                        </div>
+                    </div>
+
+                    <div class="mb-3 rounded-full bg-slate-800 h-2">
+                        <div class="rounded-full bg-accent h-full transition" style="width: @percentFull%"></div>
+                    </div>
+
+                    <div class="flex flex-col gap-2">
+                        <a asp-action="ClassAttendees" asp-route-id="@lesson.Id" class="inline-flex items-center justify-center gap-1 rounded-lg border border-sky-400/50 px-3 py-2 text-xs font-semibold text-sky-300 hover:bg-sky-500/10">
+                            <i class="bi bi-eye"></i> Katılımcılar
+                        </a>
+                        <a asp-action="EditLesson" asp-route-id="@lesson.Id" class="inline-flex items-center justify-center gap-1 rounded-lg border border-amber-400/50 px-3 py-2 text-xs font-semibold text-amber-300 hover:bg-amber-500/10">
+                            <i class="bi bi-pencil"></i> Düzenle
+                        </a>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
+

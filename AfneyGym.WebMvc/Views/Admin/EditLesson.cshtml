@@ -1,0 +1,65 @@
+﻿@model AfneyGym.Domain.Entities.Lesson
+@{
+    ViewData["Title"] = "Ders Düzenle";
+}
+
+<div class="mx-auto max-w-4xl rounded-2xl border border-slate-700/60 bg-panel p-6 shadow-2xl shadow-black/30">
+    <h4 class="mb-6 text-2xl font-black text-white"><i class="bi bi-pencil-square mr-2 text-accent"></i>DERS <span class="text-accent">DÜZENLE</span></h4>
+
+    <form asp-action="EditLesson" asp-route-id="@Model.Id" method="post" class="space-y-5">
+        @Html.AntiForgeryToken()
+        <input asp-for="Id" type="hidden" />
+
+        <div>
+            <label asp-for="Name" class="mb-2 block text-xs font-semibold uppercase tracking-wide text-slate-400">DERS ADI / TİPİ</label>
+            <input asp-for="Name" class="block w-full rounded-lg border border-slate-600 bg-panelSoft px-3 py-3 text-sm text-white placeholder-slate-500 focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30" />
+            <span asp-validation-for="Name" class="mt-1 block text-xs text-rose-300"></span>
+        </div>
+
+        <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <div>
+                <label asp-for="TrainerId" class="mb-2 block text-xs font-semibold uppercase tracking-wide text-slate-400">EĞİTMEN</label>
+                <select asp-for="TrainerId" class="block w-full rounded-lg border border-slate-600 bg-panelSoft px-3 py-3 text-sm text-white focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30" asp-items="ViewBag.Trainers"></select>
+                <span asp-validation-for="TrainerId" class="mt-1 block text-xs text-rose-300"></span>
+            </div>
+            <div>
+                <label asp-for="GymId" class="mb-2 block text-xs font-semibold uppercase tracking-wide text-slate-400">ŞUBE / SALON</label>
+                <select asp-for="GymId" class="block w-full rounded-lg border border-slate-600 bg-panelSoft px-3 py-3 text-sm text-white focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30" asp-items="ViewBag.Gyms"></select>
+                <span asp-validation-for="GymId" class="mt-1 block text-xs text-rose-300"></span>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
+            <div>
+                <label asp-for="StartTime" class="mb-2 block text-xs font-semibold uppercase tracking-wide text-slate-400">BAŞLANGIÇ SAATİ</label>
+                <input asp-for="StartTime" type="datetime-local" class="block w-full rounded-lg border border-slate-600 bg-panelSoft px-3 py-3 text-sm text-white focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30" />
+                <span asp-validation-for="StartTime" class="mt-1 block text-xs text-rose-300"></span>
+            </div>
+            <div>
+                <label asp-for="EndTime" class="mb-2 block text-xs font-semibold uppercase tracking-wide text-slate-400">BİTİŞ SAATİ</label>
+                <input asp-for="EndTime" type="datetime-local" class="block w-full rounded-lg border border-slate-600 bg-panelSoft px-3 py-3 text-sm text-white focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30" />
+                <span asp-validation-for="EndTime" class="mt-1 block text-xs text-rose-300"></span>
+            </div>
+            <div>
+                <label asp-for="Capacity" class="mb-2 block text-xs font-semibold uppercase tracking-wide text-slate-400">KONTENJAN</label>
+                <input asp-for="Capacity" type="number" min="1" class="block w-full rounded-lg border border-slate-600 bg-panelSoft px-3 py-3 text-sm text-white focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30" />
+                <span asp-validation-for="Capacity" class="mt-1 block text-xs text-rose-300"></span>
+            </div>
+        </div>
+
+        <div>
+            <label asp-for="Description" class="mb-2 block text-xs font-semibold uppercase tracking-wide text-slate-400">DERS AÇIKLAMASI</label>
+            <textarea asp-for="Description" rows="3" class="block w-full rounded-lg border border-slate-600 bg-panelSoft px-3 py-3 text-sm text-white placeholder-slate-500 focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30"></textarea>
+        </div>
+
+        <div class="flex gap-3 border-t border-slate-700/60 pt-4">
+            <button type="submit" class="inline-flex items-center justify-center rounded-lg bg-accent px-6 py-3 text-sm font-bold text-slate-900 transition hover:bg-sky-300">GÜNCELLE</button>
+            <a asp-action="ManageClasses" class="inline-flex items-center justify-center rounded-lg border border-slate-500 px-5 py-3 text-sm font-semibold text-slate-200 hover:bg-panelSoft">İPTAL</a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+

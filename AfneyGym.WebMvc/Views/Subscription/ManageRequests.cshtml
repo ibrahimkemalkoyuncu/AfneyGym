@@ -1,9 +1,6 @@
-﻿@using AfneyGym.Domain.Entities
-@using AfneyGym.Common.Enums
-@model List<Subscription>
+﻿@model List<Subscription>
 @{
     ViewData["Title"] = "Abonelik Talepleri";
-    Layout = "_AdminLayout";
 }
 
 <div>
@@ -46,6 +43,13 @@
                                     <input type="hidden" name="id" value="@sub.Id" />
                                     <button type="submit" class="inline-flex items-center gap-1 rounded-lg bg-emerald-500 px-3 py-2 text-xs font-bold text-slate-900 hover:bg-emerald-400">
                                         <i class="bi bi-check-lg"></i> ONAYLA
+                                    </button>
+                                </form>
+                                <form asp-action="Reject" method="post" class="inline-block ml-2">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="id" value="@sub.Id" />
+                                    <button type="submit" class="inline-flex items-center gap-1 rounded-lg bg-rose-500 px-3 py-2 text-xs font-bold text-white hover:bg-rose-400">
+                                        <i class="bi bi-x-lg"></i> REDDET
                                     </button>
                                 </form>
                             </td>

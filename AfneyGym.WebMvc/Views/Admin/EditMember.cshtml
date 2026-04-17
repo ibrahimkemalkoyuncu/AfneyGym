@@ -3,6 +3,8 @@
 @model UserUpdateDto
 @{
     ViewData["Title"] = "Üye Düzenle";
+    var pendingSubscriptions = ViewBag.PendingSubscriptions as List<AfneyGym.Domain.Entities.Subscription> ?? new();
+    var latestSubscription = ViewBag.LatestSubscription as AfneyGym.Domain.Entities.Subscription;
 }
 
 <div class="mx-auto max-w-3xl rounded-2xl border border-slate-700/60 bg-panel p-6 shadow-2xl shadow-black/30">
@@ -54,6 +56,58 @@
             <a asp-action="Members" class="inline-flex items-center justify-center rounded-lg border border-slate-500 px-5 py-3 text-sm font-semibold text-slate-200 hover:bg-panelSoft">İPTAL</a>
         </div>
     </form>
+
+    @if (pendingSubscriptions.Any())
+    {
+        <div class="mt-6 space-y-3 rounded-xl border border-amber-400/40 bg-amber-500/10 p-4">
+            <div class="flex items-center justify-between">
+                <span class="inline-flex rounded-full border border-amber-300/60 px-3 py-1 text-xs font-bold tracking-wide text-amber-200">PendingApproval</span>
+                <span class="text-xs text-amber-100">@pendingSubscriptions.Count adet bekleyen talep</span>
+            </div>
+
+            @foreach (var sub in pendingSubscriptions)
+            {
+                <div class="flex flex-col gap-3 rounded-lg border border-slate-700/60 bg-panelSoft p-3 sm:flex-row sm:items-center sm:justify-between">
+                    <div class="text-sm text-slate-200">
+                        <div class="font-semibold">@sub.PlanName</div>
+                        <div class="text-xs text-slate-400">@sub.StartDate.ToString("dd.MM.yyyy") - @sub.EndDate.ToString("dd.MM.yyyy")</div>
+                    </div>
+                    <div class="flex gap-2">
+                        <form asp-controller="Subscription" asp-action="Approve" method="post">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="id" value="@sub.Id" />
+                            <button type="submit" class="rounded-lg bg-emerald-500 px-3 py-2 text-xs font-bold text-slate-900 hover:bg-emerald-400">ONAYLA</button>
+                        </form>
+                        <form asp-controller="Subscription" asp-action="Reject" method="post">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="id" value="@sub.Id" />
+                            <button type="submit" class="rounded-lg bg-rose-500 px-3 py-2 text-xs font-bold text-white hover:bg-rose-400">REDDET</button>
+                        </form>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+
+    @if (latestSubscription != null && latestSubscription.Status == AfneyGym.Domain.Entities.SubscriptionStatus.Active)
+    {
+        <div class="mt-6 rounded-xl border border-sky-400/30 bg-sky-500/10 p-4">
+            <h4 class="mb-3 text-sm font-bold uppercase tracking-wide text-sky-200">Plan Yukseltme (Owner)</h4>
+            <form asp-controller="Subscription" asp-action="UpgradePlan" method="post" class="flex flex-wrap items-end gap-3">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="id" value="@latestSubscription.Id" />
+                <div>
+                    <label class="mb-1 block text-xs text-slate-300">Ek Sure (Ay)</label>
+                    <select name="additionalMonths" class="rounded-lg border border-slate-600 bg-panelSoft px-3 py-2 text-sm text-white">
+                        <option value="1">+1 Ay</option>
+                        <option value="3">+3 Ay</option>
+                        <option value="6">+6 Ay</option>
+                    </select>
+                </div>
+                <button type="submit" class="rounded-lg bg-accent px-4 py-2 text-sm font-bold text-slate-900 hover:bg-sky-300">YUKSELT</button>
+            </form>
+        </div>
+    }
 </div>
 
 @section Scripts {

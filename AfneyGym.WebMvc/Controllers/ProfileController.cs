@@ -73,9 +73,9 @@ public class ProfileController : Controller
         // Üyenin katılım verilerini ve ders detaylarını çek
         var attendanceData = await _context.LessonAttendees
             .AsNoTracking()
-            .Include(a => a.Lesson).ThenInclude(l => l.Trainer)
-            .Where(a => a.UserId == userId && !a.IsDeleted)
-            .OrderByDescending(a => a.Lesson.StartTime)
+            .Include(a => a.Lesson).ThenInclude(l => l!.Trainer)
+            .Where(a => a.UserId == userId && !a.IsDeleted && a.Lesson != null)
+            .OrderByDescending(a => a.Lesson!.StartTime)
             .ToListAsync();
 
         var model = new MemberProfileDto
@@ -87,9 +87,9 @@ public class ProfileController : Controller
             AttendedLessonsCount = attendanceData.Count(a => a.IsAttended),
             AttendanceHistory = attendanceData.Select(a => new MemberAttendanceHistoryDto
             {
-                LessonName = a.Lesson!.Name,
-                LessonDate = a.Lesson.StartTime,
-                TrainerName = a.Lesson.Trainer?.FullName ?? "Belirtilmedi",
+                LessonName = a.Lesson?.Name ?? "Belirtilmedi",
+                LessonDate = a.Lesson?.StartTime ?? DateTime.MinValue,
+                TrainerName = a.Lesson?.Trainer?.FullName ?? "Belirtilmedi",
                 IsAttended = a.IsAttended
             }).ToList()
         };

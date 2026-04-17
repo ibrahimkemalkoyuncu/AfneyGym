@@ -58,15 +58,21 @@
             {
                 @foreach (var attendee in Model.Attendees)
                 {
+                    var firstName = attendee.User?.FirstName ?? "?";
+                    var lastName = attendee.User?.LastName ?? "?";
+                    var email = attendee.User?.Email ?? "Belirtilmedi";
+                    var firstInitial = firstName.Length > 0 ? firstName[0].ToString() : "?";
+                    var lastInitial = lastName.Length > 0 ? lastName[0].ToString() : "?";
+
                     <div class="member-row flex items-center justify-between @(attendee.IsAttended ? "selected" : "")" 
                          onclick="toggleMember(this)">
                         <div class="flex items-center">
                             <div class="mr-3 flex h-11 w-11 items-center justify-center rounded-full bg-slate-700">
-                                <span class="text-sm font-bold text-slate-100">@attendee.User.FirstName[0]@attendee.User.LastName[0]</span>
+                                <span class="text-sm font-bold text-slate-100">@firstInitial@lastInitial</span>
                             </div>
                             <div>
-                                <h6 class="m-0 text-sm font-bold text-white">@attendee.User.FirstName @attendee.User.LastName</h6>
-                                <small class="text-slate-400">@attendee.User.Email</small>
+                                <h6 class="m-0 text-sm font-bold text-white">@firstName @lastName</h6>
+                                <small class="text-slate-400">@email</small>
                             </div>
                         </div>
                         <div class="status-icon">

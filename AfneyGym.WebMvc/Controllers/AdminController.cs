@@ -10,13 +10,14 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace AfneyGym.WebMvc.Controllers;
 
-[Authorize(Roles = "Admin")]
+[Authorize(Roles = "Admin,Owner")]
 public class AdminController : Controller
 {
     // FIELD MANAGEMENT PROTOKOLÜ: Tekil ve Readonly Alan Tanımları
     private readonly IDashboardService _dashboardService;
     private readonly ITrainerService _trainerService;
     private readonly ILessonService _lessonService;
+    private readonly IMemberLifecycleService _memberLifecycleService;
     private readonly AppDbContext _context;
     private readonly IWebHostEnvironment _webHostEnvironment;
 
@@ -24,12 +25,14 @@ public class AdminController : Controller
         IDashboardService dashboardService,
         ITrainerService trainerService,
         ILessonService lessonService,
+        IMemberLifecycleService memberLifecycleService,
         AppDbContext context,
         IWebHostEnvironment webHostEnvironment)
     {
         _dashboardService = dashboardService;
         _trainerService = trainerService;
         _lessonService = lessonService;
+        _memberLifecycleService = memberLifecycleService;
         _context = context;
         _webHostEnvironment = webHostEnvironment;
     }
@@ -40,6 +43,14 @@ public class AdminController : Controller
         // DashboardSummaryDto (Hafif DTO) üzerinden projeksiyon yapılmış veriler çekilir
         var stats = await _dashboardService.GetSummaryStatsAsync();
         return View(stats);
+    }
+    #endregion
+
+    #region Analytics
+    public async Task<IActionResult> Analytics()
+    {
+        var analytics = await _dashboardService.GetAnalyticsAsync();
+        return View(analytics);
     }
     #endregion
 
@@ -55,10 +66,88 @@ public class AdminController : Controller
     }
 
     [HttpGet]
+    public async Task<IActionResult> MemberDetail(Guid id)
+    {
+        var user = await _context.Users
+            .Include(u => u.Gym)
+            .FirstOrDefaultAsync(u => u.Id == id && !u.IsDeleted);
+        if (user == null) return NotFound();
+
+        var stage = await _memberLifecycleService.GetCurrentStageAsync(id);
+        var monthlyCheckIn = await _memberLifecycleService.GetMonthlyCheckInCountAsync(id);
+        var checkIns = await _memberLifecycleService.GetRecentCheckInsAsync(id);
+        var metrics = await _memberLifecycleService.GetBodyMetricsAsync(id, 12);
+        var latestMetric = await _memberLifecycleService.GetLatestBodyMetricSummaryAsync(id);
+        var goals = await _memberLifecycleService.GetActiveGoalsAsync(id);
+
+        ViewBag.Member = user;
+        ViewBag.Stage = stage.ToString();
+        ViewBag.MonthlyCheckIn = monthlyCheckIn;
+        ViewBag.CheckIns = checkIns;
+        ViewBag.Metrics = metrics;
+        ViewBag.LatestMetric = latestMetric;
+        ViewBag.Goals = goals;
+
+        return View();
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> CheckInMember(Guid id)
+    {
+        var success = await _memberLifecycleService.CheckInAsync(id);
+        TempData[success ? "SuccessMessage" : "ErrorMessage"] = success
+            ? "Uyeye check-in kaydi eklendi."
+            : "Check-in kaydi olusturulamadi. Uyenin acik bir seansi olabilir.";
+
+        return RedirectToAction(nameof(MemberDetail), new { id });
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> AddBodyMetric(Guid id, BodyMetricCreateDto dto)
+    {
+        if (dto.Weight <= 0)
+        {
+            TempData["ErrorMessage"] = "Kilo degeri 0'dan buyuk olmali.";
+            return RedirectToAction(nameof(MemberDetail), new { id });
+        }
+
+        await _memberLifecycleService.AddBodyMetricAsync(id, dto);
+        TempData["SuccessMessage"] = "Vucut olcumu kaydedildi.";
+        return RedirectToAction(nameof(MemberDetail), new { id });
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> AtRiskMembers()
+    {
+        var ids = await _memberLifecycleService.GetAtRiskMembersAsync();
+        var members = await _context.Users
+            .Where(u => ids.Contains(u.Id) && !u.IsDeleted)
+            .OrderBy(u => u.FirstName)
+            .ToListAsync();
+
+        return View(members);
+    }
+
+    [HttpGet]
     public async Task<IActionResult> EditMember(Guid id)
     {
         var user = await _context.Users.FindAsync(id);
         if (user == null) return NotFound();
+
+        var pendingSubscriptions = await _context.Subscriptions
+            .Where(s => s.UserId == id && s.Status == SubscriptionStatus.Pending && !s.IsDeleted)
+            .OrderByDescending(s => s.CreatedAt)
+            .ToListAsync();
+
+        var latestSubscription = await _context.Subscriptions
+            .Where(s => s.UserId == id && !s.IsDeleted)
+            .OrderByDescending(s => s.EndDate)
+            .FirstOrDefaultAsync();
+
+        ViewBag.PendingSubscriptions = pendingSubscriptions;
+        ViewBag.LatestSubscription = latestSubscription;
 
         // PROJECTION: Entity -> DTO (Mühendislik Protokolü: Veri Sızıntısını Önler)
         var updateDto = new UserUpdateDto
@@ -145,6 +234,95 @@ public class AdminController : Controller
     //    {
 
     //        // Email Mükerrerlik Kontrolü
+
+    #region Ders Yönetimi - Owner Panel
+    [Authorize(Roles = "Admin,Owner")]
+    [HttpGet("/owner/classes")]
+    public async Task<IActionResult> ManageClasses()
+    {
+        var lessons = await _lessonService.GetAllWithTrainersAsync();
+        return View(lessons);
+    }
+
+    [Authorize(Roles = "Admin,Owner")]
+    [HttpGet("/owner/classes/create")]
+    public async Task<IActionResult> OwnerCreateLesson()
+    {
+        await PrepareLessonDropdowns();
+        return View("CreateLesson");
+    }
+
+    [Authorize(Roles = "Admin,Owner")]
+    [HttpGet("/owner/classes/{id}/attendees")]
+    public async Task<IActionResult> ClassAttendees(Guid id)
+    {
+        var lesson = await _lessonService.GetByIdWithAttendeesAsync(id);
+        if (lesson == null) return NotFound();
+        return View(lesson);
+    }
+
+    [Authorize(Roles = "Admin,Owner")]
+    [HttpPost("/owner/classes/{id}/attendance")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> MarkAttendance(Guid id, Guid attendeeId, bool attended)
+    {
+        var success = await _lessonService.MarkAttendanceAsync(attendeeId, attended);
+        if (success)
+            TempData["SuccessMessage"] = "Yoklama başarıyla kaydedildi.";
+        else
+            TempData["ErrorMessage"] = "Yoklama kaydedilemedi.";
+
+        return RedirectToAction(nameof(ClassAttendees), new { id });
+    }
+
+    [Authorize(Roles = "Admin,Owner")]
+    [HttpGet("/owner/classes/{id}/edit")]
+    public async Task<IActionResult> EditLesson(Guid id)
+    {
+        var lesson = await _lessonService.GetByIdAsync(id);
+        if (lesson == null || lesson.IsDeleted) return NotFound();
+
+        await PrepareLessonDropdowns();
+        return View(lesson);
+    }
+
+    [Authorize(Roles = "Admin,Owner")]
+    [HttpPost("/owner/classes/{id}/edit")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> EditLesson(Guid id, Lesson lesson)
+    {
+        if (id != lesson.Id) return BadRequest();
+
+        if (lesson.StartTime >= lesson.EndTime)
+            ModelState.AddModelError("EndTime", "Bitiş saati başlangıç saatinden sonra olmalıdır.");
+
+        if (!ModelState.IsValid)
+        {
+            await PrepareLessonDropdowns();
+            return View(lesson);
+        }
+
+        var existingLesson = await _lessonService.GetByIdAsync(id);
+        if (existingLesson == null || existingLesson.IsDeleted) return NotFound();
+
+        existingLesson.Name = lesson.Name;
+        existingLesson.Description = lesson.Description;
+        existingLesson.StartTime = lesson.StartTime;
+        existingLesson.EndTime = lesson.EndTime;
+        existingLesson.Capacity = lesson.Capacity;
+        existingLesson.TrainerId = lesson.TrainerId;
+        existingLesson.GymId = lesson.GymId;
+        existingLesson.UpdatedAt = DateTime.UtcNow;
+
+        var updated = await _lessonService.UpdateAsync(existingLesson);
+        if (!updated)
+            TempData["ErrorMessage"] = "Ders güncellenemedi. Eğitmen saat çakışması veya veri hatası olabilir.";
+        else
+            TempData["SuccessMessage"] = "Ders başarıyla güncellendi.";
+
+        return RedirectToAction(nameof(ManageClasses));
+    }
+    #endregion
     //        var exists = await _context.Trainers.AnyAsync(t => t.Email == trainer.Email && !t.IsDeleted);
     //        if (exists)
     //        {
@@ -349,8 +527,15 @@ public class AdminController : Controller
 
         if (ModelState.IsValid)
         {
-            await _lessonService.CreateAsync(lesson);
-            return RedirectToAction(nameof(Lessons));
+            var created = await _lessonService.CreateAsync(lesson);
+            if (!created)
+            {
+                ModelState.AddModelError(string.Empty, "Ders oluşturulamadı. Eğitmen seçilen saat aralığında başka bir derste olabilir.");
+                await PrepareLessonDropdowns();
+                return View(lesson);
+            }
+
+            return RedirectToAction(nameof(ManageClasses));
         }
 
         await PrepareLessonDropdowns();

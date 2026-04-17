@@ -1,11 +1,44 @@
-﻿@* Subscription/Index.cshtml içinde Paket Seçme Butonuna tıklandığında açılacak alan *@
-<div class="payment-info-box mt-4 rounded-2xl border border-slate-700 bg-panel p-5">
-    <h5 class="text-base font-extrabold text-white"><i class="bi bi-bank mr-2 text-accent"></i>ÖDEME BİLGİLERİ</h5>
-    <div class="my-4 h-px bg-slate-700"></div>
-    <div class="grid grid-cols-1 gap-3 text-sm text-slate-400 sm:grid-cols-2">
-        <div>Banka:</div><div class="text-left text-white sm:text-right">Afney Bank A.Ş.</div>
-        <div>Alıcı:</div><div class="text-left text-white sm:text-right">AfneyGym Spor İşletmeleri</div>
-        <div>IBAN:</div><div class="text-left text-sm font-bold text-white sm:text-right">TR00 0000 0000 0000 0000 0000 00</div>
-        <div class="sm:col-span-2 text-amber-300">* Lütfen açıklama kısmına e-posta adresinizi yazınız.</div>
+﻿@using AfneyGym.Domain.Entities
+@{
+    var currentSub = ViewBag.CurrentSubscription as Subscription;
+}
+
+<div class="space-y-5">
+    <div class="rounded-2xl border border-slate-700 bg-panel p-5">
+        <h3 class="text-lg font-black text-white">Uyelik Satin Alma</h3>
+        <p class="mt-1 text-sm text-slate-400">Ilk faz manuel odeme + owner onayi ile ilerler. Sonraki fazda iyzico checkout aktif edilir.</p>
+        <div class="mt-4 flex flex-wrap gap-2">
+            <form asp-action="PurchaseRequest" method="post">@Html.AntiForgeryToken()<input type="hidden" name="months" value="1" /><button class="rounded-lg bg-accent px-4 py-2 text-sm font-bold text-slate-900">1 Ay Talep</button></form>
+            <form asp-action="PurchaseRequest" method="post">@Html.AntiForgeryToken()<input type="hidden" name="months" value="3" /><button class="rounded-lg bg-accent px-4 py-2 text-sm font-bold text-slate-900">3 Ay Talep</button></form>
+            <form asp-action="PurchaseRequest" method="post">@Html.AntiForgeryToken()<input type="hidden" name="months" value="6" /><button class="rounded-lg bg-accent px-4 py-2 text-sm font-bold text-slate-900">6 Ay Talep</button></form>
+            <form asp-action="PurchaseRequest" method="post">@Html.AntiForgeryToken()<input type="hidden" name="months" value="12" /><button class="rounded-lg bg-accent px-4 py-2 text-sm font-bold text-slate-900">12 Ay Talep</button></form>
+        </div>
     </div>
+
+    <div class="payment-info-box rounded-2xl border border-slate-700 bg-panel p-5">
+        <h5 class="text-base font-extrabold text-white"><i class="bi bi-bank mr-2 text-accent"></i>MANUEL ODEME BILGILERI</h5>
+        <div class="my-4 h-px bg-slate-700"></div>
+        <div class="grid grid-cols-1 gap-3 text-sm text-slate-400 sm:grid-cols-2">
+            <div>Banka:</div><div class="text-left text-white sm:text-right">Afney Bank A.S.</div>
+            <div>Alici:</div><div class="text-left text-white sm:text-right">AfneyGym Spor Isletmeleri</div>
+            <div>IBAN:</div><div class="text-left text-sm font-bold text-white sm:text-right">TR00 0000 0000 0000 0000 0000 00</div>
+            <div class="sm:col-span-2 text-amber-300">* Aciklama kismina e-posta adresinizi yazin.</div>
+        </div>
+    </div>
+
+    @if (currentSub != null)
+    {
+        <div class="rounded-2xl border border-slate-700 bg-panel p-5">
+            <h4 class="text-base font-extrabold text-white">Mevcut Uyelik</h4>
+            <p class="mt-1 text-sm text-slate-300">@currentSub.PlanName | Durum: @currentSub.Status | Bitis: @currentSub.EndDate.ToString("dd.MM.yyyy")</p>
+
+            <div class="mt-4 flex flex-wrap gap-2">
+                <form asp-action="Freeze" method="post">@Html.AntiForgeryToken()<input type="hidden" name="id" value="@currentSub.Id" /><button class="rounded-lg border border-amber-400 px-3 py-2 text-xs font-semibold text-amber-300">DONDUR</button></form>
+                <form asp-action="Resume" method="post">@Html.AntiForgeryToken()<input type="hidden" name="id" value="@currentSub.Id" /><button class="rounded-lg border border-emerald-400 px-3 py-2 text-xs font-semibold text-emerald-300">DEVAM ET</button></form>
+                <form asp-action="Cancel" method="post">@Html.AntiForgeryToken()<input type="hidden" name="id" value="@currentSub.Id" /><button class="rounded-lg border border-rose-400 px-3 py-2 text-xs font-semibold text-rose-300">IPTAL</button></form>
+                <form asp-action="Renew" method="post">@Html.AntiForgeryToken()<input type="hidden" name="id" value="@currentSub.Id" /><input type="hidden" name="months" value="1" /><button class="rounded-lg border border-sky-400 px-3 py-2 text-xs font-semibold text-sky-300">1 AY YENILE</button></form>
+                <form asp-action="ToggleAutoRenew" method="post">@Html.AntiForgeryToken()<input type="hidden" name="id" value="@currentSub.Id" /><button class="rounded-lg border border-violet-400 px-3 py-2 text-xs font-semibold text-violet-300">@(currentSub.AutoRenew ? "OTOMATIK YENILEME KAPAT" : "OTOMATIK YENILEME AC")</button></form>
+            </div>
+        </div>
+    }
 </div>

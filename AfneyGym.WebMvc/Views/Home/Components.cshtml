@@ -1,0 +1,218 @@
+﻿@{
+    ViewData["Title"] = "AfneyGym UI Komponentleri";
+}
+
+<div class="min-h-screen bg-gymbg py-12 px-4">
+    <div class="mx-auto max-w-7xl">
+        <!-- Header -->
+        <div class="mb-12">
+            <h1 class="text-5xl font-black text-white">
+                AfneyGym <span class="text-accent">UI Components</span>
+            </h1>
+            <p class="mt-2 text-lg text-slate-400">Tasarım Sistemi v1.0 - Tailwind CSS</p>
+        </div>
+
+        <!-- Colors Section -->
+        <section class="mb-16">
+            <h2 class="mb-6 text-3xl font-black text-white">🎨 Renk Paleti</h2>
+            <div class="grid grid-cols-2 gap-4 md:grid-cols-6">
+                <div>
+                    <div class="h-24 rounded-lg bg-gymbg border border-slate-600"></div>
+                    <p class="mt-2 text-xs text-slate-400">gymbg</p>
+                    <p class="text-xs font-mono text-slate-300">#0b1020</p>
+                </div>
+                <div>
+                    <div class="h-24 rounded-lg bg-panel border border-slate-600"></div>
+                    <p class="mt-2 text-xs text-slate-400">panel</p>
+                    <p class="text-xs font-mono text-slate-300">#121a2f</p>
+                </div>
+                <div>
+                    <div class="h-24 rounded-lg bg-panelSoft border border-slate-600"></div>
+                    <p class="mt-2 text-xs text-slate-400">panelSoft</p>
+                    <p class="text-xs font-mono text-slate-300">#1a2440</p>
+                </div>
+                <div>
+                    <div class="h-24 rounded-lg bg-accent border border-slate-600"></div>
+                    <p class="mt-2 text-xs text-slate-400">accent</p>
+                    <p class="text-xs font-mono text-slate-300">#0ea5e9</p>
+                </div>
+                <div>
+                    <div class="h-24 rounded-lg bg-emerald-500 border border-slate-600"></div>
+                    <p class="mt-2 text-xs text-slate-400">success</p>
+                    <p class="text-xs font-mono text-slate-300">#10b981</p>
+                </div>
+                <div>
+                    <div class="h-24 rounded-lg bg-rose-500 border border-slate-600"></div>
+                    <p class="mt-2 text-xs text-slate-400">danger</p>
+                    <p class="text-xs font-mono text-slate-300">#ef4444</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Buttons Section -->
+        <section class="mb-16">
+            <h2 class="mb-6 text-3xl font-black text-white">🔘 Butonlar</h2>
+            <div class="space-y-6 rounded-2xl border border-slate-700/60 bg-panel p-8">
+                <div>
+                    <p class="mb-3 text-sm font-semibold text-slate-400">PRIMARY (CTA)</p>
+                    <button class="inline-flex items-center justify-center gap-2 rounded-lg bg-accent px-4 py-3 text-sm font-bold text-slate-900 transition hover:bg-sky-300">
+                        <i class="bi bi-check-lg"></i> ONAYLA
+                    </button>
+                </div>
+                <div>
+                    <p class="mb-3 text-sm font-semibold text-slate-400">SECONDARY (BORDER)</p>
+                    <button class="inline-flex items-center justify-center gap-2 rounded-lg border border-slate-500 px-5 py-3 text-sm font-semibold text-slate-200 hover:bg-panelSoft">
+                        İPTAL
+                    </button>
+                </div>
+                <div>
+                    <p class="mb-3 text-sm font-semibold text-slate-400">ICON (SMALL)</p>
+                    <div class="flex gap-2">
+                        <button class="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-sky-400/50 text-sky-300 hover:bg-sky-500/10" title="Düzenle">
+                            <i class="bi bi-pencil-square"></i>
+                        </button>
+                        <button class="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-rose-400/50 text-rose-300 hover:bg-rose-500/10" title="Sil">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                        <button class="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-emerald-400/50 text-emerald-300 hover:bg-emerald-500/10" title="Kaydet">
+                            <i class="bi bi-check"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Badges Section -->
+        <section class="mb-16">
+            <h2 class="mb-6 text-3xl font-black text-white">🏷️ Badge'ler</h2>
+            <div class="space-y-4 rounded-2xl border border-slate-700/60 bg-panel p-8">
+                <div>
+                    <span class="inline-flex rounded-full bg-emerald-500/20 px-3 py-1 text-xs font-semibold text-emerald-300">
+                        ✅ AKTIF
+                    </span>
+                </div>
+                <div>
+                    <span class="inline-flex rounded-full bg-amber-500/20 px-2 py-1 text-xs font-bold text-amber-300">
+                        ⚠️ AZ KALDI
+                    </span>
+                </div>
+                <div>
+                    <span class="inline-flex rounded-full bg-rose-500/20 px-2 py-1 text-xs font-semibold text-rose-300">
+                        ❌ DOLDU
+                    </span>
+                </div>
+                <div>
+                    <span class="inline-flex rounded-full bg-blue-500/20 px-3 py-1 text-xs font-semibold text-blue-300">
+                        ℹ️ BİLGİ
+                    </span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Cards Section -->
+        <section class="mb-16">
+            <h2 class="mb-6 text-3xl font-black text-white">📦 Kartlar</h2>
+            <div class="grid gap-6 md:grid-cols-2">
+                <!-- Panel Card -->
+                <div class="rounded-2xl border border-slate-700/60 bg-panel p-6 shadow-2xl shadow-black/30">
+                    <h3 class="text-lg font-black text-white">Panel Card</h3>
+                    <p class="mt-2 text-sm text-slate-400">Standart panel kartı, genellikle bilgi veya form için kullanılır.</p>
+                    <div class="mt-4 text-xs text-slate-500">Standard padding: p-6</div>
+                </div>
+
+                <!-- Info Card -->
+                <div class="rounded-xl border border-slate-700/60 bg-panel p-4">
+                    <div class="text-xs uppercase tracking-wide text-slate-400 mb-1">KAYITLI ÜYE</div>
+                    <div class="text-3xl font-black text-accent">1,234</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Forms Section -->
+        <section class="mb-16">
+            <h2 class="mb-6 text-3xl font-black text-white">📝 Form Elemanları</h2>
+            <div class="space-y-4 rounded-2xl border border-slate-700/60 bg-panel p-8">
+                <!-- Text Input -->
+                <div>
+                    <label class="mb-2 block text-xs font-semibold uppercase tracking-wide text-slate-400">E-Posta</label>
+                    <div class="relative">
+                        <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-slate-500">
+                            <i class="bi bi-envelope"></i>
+                        </div>
+                        <input type="email" class="block w-full rounded-lg border border-slate-600 bg-panelSoft py-3 pl-10 pr-3 text-sm text-white placeholder-slate-500 focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30" placeholder="ornek@mail.com" />
+                    </div>
+                </div>
+
+                <!-- Password Input -->
+                <div>
+                    <label class="mb-2 block text-xs font-semibold uppercase tracking-wide text-slate-400">Şifre</label>
+                    <div class="relative">
+                        <input type="password" id="passwordDemo" class="block w-full rounded-lg border border-slate-600 bg-panelSoft py-3 pl-10 pr-10 text-sm text-white placeholder-slate-500 focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30" placeholder="••••••••" />
+                        <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-slate-500">
+                            <i class="bi bi-shield-lock"></i>
+                        </div>
+                        <button type="button" onclick="togglePasswordDemo()" class="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-500 hover:text-accent transition">
+                            <i class="bi bi-eye" id="passwordIconDemo"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Select -->
+                <div>
+                    <label class="mb-2 block text-xs font-semibold uppercase tracking-wide text-slate-400">Rol Seç</label>
+                    <select class="block w-full rounded-lg border border-slate-600 bg-panelSoft py-3 px-3 text-sm text-white focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30">
+                        <option>Admin</option>
+                        <option>Owner</option>
+                        <option>Staff</option>
+                        <option>Member</option>
+                    </select>
+                </div>
+            </div>
+        </section>
+
+        <!-- Typography Section -->
+        <section>
+            <h2 class="mb-6 text-3xl font-black text-white">🔤 Tipografi</h2>
+            <div class="space-y-4 rounded-2xl border border-slate-700/60 bg-panel p-8">
+                <div>
+                    <p class="text-5xl font-black text-white">H1 - Heading Black (30px)</p>
+                </div>
+                <div>
+                    <p class="text-3xl font-black text-white">H2 - Heading Black (24px)</p>
+                </div>
+                <div>
+                    <p class="text-lg font-black text-white">H3 - Heading Black (18px)</p>
+                </div>
+                <div>
+                    <p class="text-base text-slate-300">Body Text - Regular (16px)</p>
+                </div>
+                <div>
+                    <p class="text-sm text-slate-400">Small Text - Secondary (14px)</p>
+                </div>
+                <div>
+                    <p class="text-xs text-slate-500">Helper Text - Muted (12px)</p>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function togglePasswordDemo() {
+            const input = document.getElementById('passwordDemo');
+            const icon = document.getElementById('passwordIconDemo');
+            
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('bi-eye');
+                icon.classList.add('bi-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('bi-eye-slash');
+                icon.classList.add('bi-eye');
+            }
+        }
+    </script>
+}
+

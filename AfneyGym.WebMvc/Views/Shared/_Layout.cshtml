@@ -27,99 +27,100 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 </head>
 <body class="bg-gymbg text-slate-100 min-h-screen">
-
-    @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
-    {
-        var currentController = ViewContext.RouteData.Values["Controller"]?.ToString();
-        var currentAction = ViewContext.RouteData.Values["Action"]?.ToString();
-        <aside id="sidebar" class="fixed inset-y-0 left-0 z-30 w-72 border-r border-slate-700/50 bg-panel/95 backdrop-blur-xl transition-all duration-300">
-            <div class="flex h-20 items-center justify-between border-b border-slate-700/40 px-6">
-                <h1 class="text-xl font-black tracking-wide">AFNEY<span class="text-accent">GYM</span></h1>
-                <button type="button" id="sidebarCollapse" class="rounded-lg border border-slate-600 px-2 py-1 text-slate-300 hover:bg-panelSoft">
-                    <i class="bi bi-list"></i>
-                </button>
+    <nav class="sticky top-0 z-20 border-b border-slate-700/50 bg-panel/90 px-6 py-4 backdrop-blur-xl">
+        <div class="mx-auto flex max-w-7xl items-center justify-between">
+            <div class="flex items-center gap-4">
+                <a class="text-xl font-black tracking-wide" asp-controller="Home" asp-action="Index">AFNEY<span class="text-accent">GYM</span></a>
+                <a asp-controller="Home" asp-action="Index" class="text-sm text-slate-300 hover:text-white">Ana Sayfa</a>
+                <a asp-controller="Home" asp-action="Lessons" class="text-sm text-slate-300 hover:text-white">Dersler</a>
+                @if (User.Identity?.IsAuthenticated == true && User.IsInRole("Member"))
+                {
+                    <a asp-controller="Member" asp-action="Dashboard" class="text-sm text-slate-300 hover:text-white">Panelim</a>
+                }
             </div>
-            <nav class="mt-4 px-3">
-                <a class="mb-1 flex items-center gap-3 rounded-lg px-4 py-3 @(currentController == "Admin" && currentAction == "Dashboard" ? "bg-panelSoft text-white" : "text-slate-300 hover:bg-panelSoft hover:text-white")" asp-controller="Admin" asp-action="Dashboard"><i class="bi bi-speedometer2"></i><span>Dashboard</span></a>
-                <a class="mb-1 flex items-center gap-3 rounded-lg px-4 py-3 @(currentController == "Admin" && currentAction == "Members" ? "bg-panelSoft text-white" : "text-slate-300 hover:bg-panelSoft hover:text-white")" asp-controller="Admin" asp-action="Members"><i class="bi bi-people"></i><span>Kullanıcılar</span></a>
-                <a class="mb-1 flex items-center gap-3 rounded-lg px-4 py-3 @(currentController == "Admin" && currentAction == "Trainers" ? "bg-panelSoft text-white" : "text-slate-300 hover:bg-panelSoft hover:text-white")" asp-controller="Admin" asp-action="Trainers"><i class="bi bi-person-badge"></i><span>Eğitmenler</span></a>
-                <a class="mb-1 flex items-center gap-3 rounded-lg px-4 py-3 @(currentController == "Admin" && currentAction == "Lessons" ? "bg-panelSoft text-white" : "text-slate-300 hover:bg-panelSoft hover:text-white")" asp-controller="Admin" asp-action="Lessons"><i class="bi bi-calendar-event"></i><span>Dersler</span></a>
-                <a class="mt-8 flex items-center gap-3 rounded-lg px-4 py-3 text-rose-300 hover:bg-rose-500/10" asp-controller="Account" asp-action="Logout"><i class="bi bi-box-arrow-right"></i><span>Çıkış</span></a>
-            </nav>
-        </aside>
-    }
-
-    <div id="content" class="min-h-screen transition-all duration-300 @(User.Identity.IsAuthenticated && User.IsInRole("Admin") ? "ml-72" : "ml-0")">
-        @if (!User.IsInRole("Admin"))
-        {
-            <nav class="sticky top-0 z-20 border-b border-slate-700/50 bg-panel/90 px-6 py-4 backdrop-blur-xl">
-                <div class="mx-auto flex max-w-7xl items-center justify-between">
-                    <a class="text-xl font-black tracking-wide" asp-controller="Home" asp-action="Index">AFNEY<span class="text-accent">GYM</span></a>
-                    <div class="flex items-center gap-2">
-                        @if (User.Identity.IsAuthenticated)
-                        {
-                            <span class="mr-2 text-sm text-slate-300">Merhaba, @User.Identity.Name</span>
-                            <a asp-controller="Account" asp-action="Logout" class="rounded-lg border border-rose-400/60 px-3 py-2 text-sm text-rose-300 hover:bg-rose-500/10">Çıkış</a>
-                        }
-                        else
-                        {
-                            <a asp-controller="Account" asp-action="Login" class="rounded-lg border border-slate-500 px-3 py-2 text-sm text-slate-200 hover:bg-panelSoft">Giriş Yap</a>
-                            <a asp-controller="Account" asp-action="Register" class="rounded-lg bg-accent px-3 py-2 text-sm font-semibold text-slate-900 shadow-glow hover:bg-sky-300">Üye Ol</a>
-                        }
-                    </div>
-                </div>
-            </nav>
-        }
-
-        <div class="@(User.Identity.IsAuthenticated && User.IsInRole("Admin") ? "w-full px-4 py-6 md:px-8" : "mx-auto max-w-7xl px-4 py-6 md:px-8")">
-            @RenderBody()
+            <div class="flex items-center gap-2">
+                @if (User.Identity?.IsAuthenticated == true)
+                {
+                    <span class="mr-2 text-sm text-slate-300">Merhaba, @User.Identity.Name</span>
+                    <a asp-controller="Account" asp-action="Logout" class="rounded-lg border border-rose-400/60 px-3 py-2 text-sm text-rose-300 hover:bg-rose-500/10">Çıkış</a>
+                }
+                else
+                {
+                    <a asp-controller="Account" asp-action="Login" class="rounded-lg border border-slate-500 px-3 py-2 text-sm text-slate-200 hover:bg-panelSoft">Giriş Yap</a>
+                    <a asp-controller="Account" asp-action="Register" class="rounded-lg bg-accent px-3 py-2 text-sm font-semibold text-slate-900 shadow-glow hover:bg-sky-300">Üye Ol</a>
+                }
+            </div>
         </div>
+    </nav>
+
+    <div class="mx-auto max-w-7xl px-4 py-6 md:px-8">
+        @RenderBody()
     </div>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/preline@2.5.0/dist/preline.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.7/signalr.min.js"></script>
     <script>
-        $(document).ready(function () {
-            $('#sidebarCollapse').on('click', function () {
-                const isCollapsed = $('#sidebar').toggleClass('w-20').hasClass('w-20');
-                if (isCollapsed) {
-                    $('#sidebar').removeClass('w-72');
-                    $('#content').removeClass('ml-72').addClass('ml-20');
-                } else {
-                    $('#sidebar').removeClass('w-20').addClass('w-72');
-                    $('#content').removeClass('ml-20').addClass('ml-72');
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <text>
+            Swal.fire({
+                icon: 'success',
+                title: 'Başarılı!',
+                text: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(TempData["SuccessMessage"]?.ToString())),
+                background: '#121a2f',
+                color: '#fff',
+                confirmButtonColor: '#0ea5e9'
+            });
+            </text>
+        }
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <text>
+            Swal.fire({
+                icon: 'error',
+                title: 'Hata!',
+                text: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(TempData["ErrorMessage"]?.ToString())),
+                background: '#121a2f',
+                color: '#fff',
+                confirmButtonColor: '#0ea5e9'
+            });
+            </text>
+        }
+
+        if ('@User.Identity?.IsAuthenticated' === 'True') {
+            const connection = new signalR.HubConnectionBuilder()
+                .withUrl('/hubs/notifications')
+                .withAutomaticReconnect()
+                .build();
+
+            connection.on('Notify', function (payload) {
+                const title = payload?.title || 'Bildirim';
+                const body = payload?.body || '';
+
+                Swal.fire({
+                    icon: 'info',
+                    title: title,
+                    text: body,
+                    background: '#121a2f',
+                    color: '#fff',
+                    confirmButtonColor: '#0ea5e9'
+                });
+
+                if ('Notification' in window && Notification.permission === 'granted') {
+                    new Notification(title, { body: body });
                 }
             });
 
-            @if (TempData["SuccessMessage"] != null)
-            {
-                <text>
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Başarılı!',
-                    text: '@Html.Raw(TempData["SuccessMessage"])', 
-                    background: '#121a2f',
-                    color: '#fff',
-                    confirmButtonColor: '#0ea5e9'
-                });
-                </text>
+            if ('Notification' in window && Notification.permission === 'default') {
+                Notification.requestPermission();
             }
-            @if (TempData["ErrorMessage"] != null)
-            {
-                <text>
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Hata!',
-                    text: '@Html.Raw(TempData["ErrorMessage"])',
-                    background: '#121a2f',
-                    color: '#fff',
-                    confirmButtonColor: '#0ea5e9'
-                });
-                </text>
-            }
-        });
+
+            connection.start().catch(function () {
+                // Web bildirim baglantisi kurulamazsa uygulama davranisi etkilenmesin.
+            });
+        }
     </script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>

@@ -90,9 +90,9 @@ public class AccountController : Controller
         var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
         await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity));
 
-        return user.Role == UserRole.Admin
+        return user.Role == UserRole.Admin || user.Role == UserRole.Owner
             ? RedirectToAction("Dashboard", "Admin")
-            : RedirectToAction("Index", "Home");
+            : RedirectToAction("Lessons", "Home");
     }
 
     [HttpGet]

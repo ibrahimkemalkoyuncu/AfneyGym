@@ -20,6 +20,7 @@
         };
     </script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <style>
         :root { --sidebar-width: 260px; }
         body { background-color: #0b1020; color: #fff; }
@@ -30,6 +31,8 @@
             background: #121a2f; 
             border-right: 1px solid rgba(148, 163, 184, 0.25);
             padding-top: 20px;
+            display: flex;
+            flex-direction: column;
         }
         .nav-link { 
             color: #cbd5e1; 
@@ -45,10 +48,16 @@
             border-left-color: #0ea5e9;
         }
         .nav-link i { margin-right: 15px; font-size: 1.2rem; }
-        .main-content { margin-left: var(--sidebar-width); padding: 30px; max-width: 1200px; }
+        .sidebar-nav { flex: 1; display: flex; flex-direction: column; }
+        .main-content { margin-left: var(--sidebar-width); padding: 30px; max-width: 1200px; min-height: 100vh; }
     </style>
 </head>
 <body class="bg-gymbg">
+    @{
+        var currentController = ViewContext.RouteData.Values["Controller"]?.ToString();
+        var currentAction = ViewContext.RouteData.Values["Action"]?.ToString();
+        var currentPath = Context.Request.Path.Value ?? string.Empty;
+    }
 
     <aside class="sidebar">
         <div class="mb-4 px-4">
@@ -56,31 +65,46 @@
             <small class="text-slate-400">Admin Kontrol Paneli</small>
         </div>
 
-        <nav class="flex flex-col">
-            <a class="nav-link @(ViewContext.RouteData.Values["Action"]?.ToString() == "Dashboard" ? "active" : "")" 
+        <nav class="sidebar-nav">
+            <a class="nav-link @(currentController == "Admin" && currentAction == "Dashboard" ? "active" : "")" 
                asp-controller="Admin" asp-action="Dashboard">
                 <i class="bi bi-speedometer2"></i> Dashboard
             </a>
 
-            <a class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Subscription" ? "active" : "")" 
+            <a class="nav-link @(currentController == "Admin" && currentAction == "Analytics" ? "active" : "")" 
+               asp-controller="Admin" asp-action="Analytics">
+                 <i class="bi bi-graph-up"></i> Analytics & Raporlar
+            </a>
+
+            <a class="nav-link @(currentController == "Subscription" && currentAction == "ManageRequests" ? "active" : "")" 
                asp-controller="Subscription" asp-action="ManageRequests">
                 <i class="bi bi-credit-card"></i> Abonelik Talepleri
                 @* Not: Buraya dinamik rakam ViewComponent ile eklenebilir *@
             </a>
 
-            <a class="nav-link @(ViewContext.RouteData.Values["Action"]?.ToString() == "Members" ? "active" : "")" 
+            <a class="nav-link @(currentController == "Admin" && currentAction == "Members" ? "active" : "")" 
                asp-controller="Admin" asp-action="Members">
                 <i class="bi bi-people"></i> Üye Yönetimi
             </a>
 
-            <a class="nav-link @(ViewContext.RouteData.Values["Action"]?.ToString() == "Trainers" ? "active" : "")" 
+            <a class="nav-link @(currentController == "Admin" && currentAction == "AtRiskMembers" ? "active" : "")" 
+               asp-controller="Admin" asp-action="AtRiskMembers">
+                <i class="bi bi-exclamation-triangle"></i> Riskteki Üyeler
+            </a>
+
+            <a class="nav-link @(currentController == "Admin" && currentAction == "Trainers" ? "active" : "")" 
                asp-controller="Admin" asp-action="Trainers">
                 <i class="bi bi-person-badge"></i> Eğitmenler
             </a>
 
-            <a class="nav-link @(ViewContext.RouteData.Values["Action"]?.ToString() == "Lessons" ? "active" : "")" 
+            <a class="nav-link @(currentController == "Admin" && currentAction == "Lessons" ? "active" : "")" 
                asp-controller="Admin" asp-action="Lessons">
                 <i class="bi bi-calendar-event"></i> Ders Programı
+            </a>
+
+            <a class="nav-link @(currentPath.StartsWith("/owner/classes", StringComparison.OrdinalIgnoreCase) ? "active" : "")" 
+               href="/owner/classes">
+                 <i class="bi bi-people-fill"></i> Ders Yönetimi
             </a>
 
             <div class="mt-auto border-t border-slate-600 pt-2">
@@ -97,6 +121,37 @@
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/preline@2.5.0/dist/preline.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Başarılı!',
+                    text: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(TempData["SuccessMessage"]?.ToString())),
+                    background: '#121a2f',
+                    color: '#fff',
+                    confirmButtonColor: '#0ea5e9'
+                });
+            });
+        </script>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Hata!',
+                    text: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(TempData["ErrorMessage"]?.ToString())),
+                    background: '#121a2f',
+                    color: '#fff',
+                    confirmButtonColor: '#0ea5e9'
+                });
+            });
+        </script>
+    }
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

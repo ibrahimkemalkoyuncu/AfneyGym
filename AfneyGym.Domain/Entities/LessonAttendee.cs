@@ -11,4 +11,6 @@ public class LessonAttendee : BaseEntity
 
     // YOKLAMA SİSTEMİ İÇİN KRİTİK ALAN
     public bool IsAttended { get; set; } = false;
+
+    public DateTime? ReminderSentAt { get; set; }
 }

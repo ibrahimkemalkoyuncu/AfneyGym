@@ -1,0 +1,111 @@
+﻿@model Lesson
+@{
+    ViewData["Title"] = "Ders Katılımcıları";
+    var activeAttendees = Model.Attendees.Where(a => !a.IsDeleted).OrderByDescending(a => a.CreatedAt).ToList();
+}
+
+<div>
+    <div class="mb-5">
+        <a asp-controller="Admin" asp-action="ManageClasses" class="mb-3 inline-flex items-center gap-2 text-sm font-semibold text-accent hover:text-sky-300">
+            <i class="bi bi-arrow-left"></i> Derslere Dön
+        </a>
+        <h2 class="text-3xl font-black uppercase tracking-wide">
+            @Model.Name <span class="text-accent">KATILIMCILARI</span>
+        </h2>
+        <p class="mt-1 text-sm text-slate-400">@Model.Trainer?.FullName | @Model.StartTime.ToString("dd.MM.yyyy HH:mm")</p>
+    </div>
+
+    <div class="grid grid-cols-1 gap-4 md:grid-cols-3 mb-5">
+        <div class="rounded-xl border border-slate-700/60 bg-panel p-4">
+            <div class="text-xs uppercase tracking-wide text-slate-400 mb-1">Toplam Kapasite</div>
+            <div class="text-3xl font-black text-white">@Model.Capacity</div>
+        </div>
+        <div class="rounded-xl border border-slate-700/60 bg-panel p-4">
+            <div class="text-xs uppercase tracking-wide text-slate-400 mb-1">Kayıtlı</div>
+            <div class="text-3xl font-black text-accent">@activeAttendees.Count</div>
+        </div>
+        <div class="rounded-xl border border-slate-700/60 bg-panel p-4">
+            <div class="text-xs uppercase tracking-wide text-slate-400 mb-1">Boş Yer</div>
+            <div class="text-3xl font-black text-emerald-400">@(Model.Capacity - activeAttendees.Count)</div>
+        </div>
+    </div>
+
+    @if (!activeAttendees.Any())
+    {
+        <div class="rounded-lg border border-slate-700/60 bg-panel p-6 text-center">
+            <p class="text-slate-400">Henüz kayıtlı katılımcı yok.</p>
+        </div>
+    }
+    else
+    {
+        <div class="overflow-hidden rounded-2xl border border-slate-700/60 bg-panel shadow-2xl">
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-slate-700/60 text-sm">
+                    <thead class="bg-panelSoft">
+                        <tr class="text-left text-xs uppercase tracking-wide text-slate-400">
+                            <th class="px-5 py-3">AD SOYAD</th>
+                            <th class="px-5 py-3">E-POSTA</th>
+                            <th class="px-5 py-3">KAYIT TARİHİ</th>
+                            <th class="px-5 py-3 text-center">YOKLAMA</th>
+                            <th class="px-5 py-3 text-right">İŞLEMLER</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-800/70">
+                        @foreach (var attendee in activeAttendees)
+                        {
+                            <tr class="hover:bg-slate-800/40">
+                                <td class="px-5 py-4">
+                                    <div class="font-semibold text-white">@attendee.User?.FirstName @attendee.User?.LastName</div>
+                                </td>
+                                <td class="px-5 py-4 text-slate-300">@attendee.User?.Email</td>
+                                <td class="px-5 py-4 text-slate-400 text-xs">@attendee.CreatedAt.ToString("dd.MM.yyyy HH:mm")</td>
+                                <td class="px-5 py-4 text-center">
+                                    @if (attendee.IsAttended)
+                                    {
+                                        <span class="inline-flex rounded-full bg-emerald-500/20 px-2 py-1 text-xs font-bold text-emerald-300">
+                                            <i class="bi bi-check-circle-fill me-1"></i> GİTTİ
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="inline-flex rounded-full bg-slate-500/20 px-2 py-1 text-xs font-bold text-slate-300">
+                                            <i class="bi bi-dash-circle me-1"></i> BELİRTİLMEDİ
+                                        </span>
+                                    }
+                                </td>
+                                <td class="px-5 py-4 text-right">
+                                    <form asp-action="MarkAttendance" method="post" class="inline-block">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="id" value="@Model.Id" />
+                                        <input type="hidden" name="attendeeId" value="@attendee.Id" />
+                                        <button type="submit" name="attended" value="@(!attendee.IsAttended)" 
+                                                class="inline-flex items-center gap-1 rounded-lg px-3 py-2 text-xs font-semibold transition
+                                                @if (attendee.IsAttended)
+                                                {
+                                                    @: border border-rose-400/50 text-rose-300 hover:bg-rose-500/10
+                                                }
+                                                else
+                                                {
+                                                    @: border border-emerald-400/50 text-emerald-300 hover:bg-emerald-500/10
+                                                }">
+                                            <i class="bi bi-check-lg"></i>
+                                            @if (attendee.IsAttended)
+                                            {
+                                                @: GİTMEDİ YENILE
+                                            }
+                                            else
+                                            {
+                                                @: GİTTİ KAYDET
+                                            }
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+</div>
+

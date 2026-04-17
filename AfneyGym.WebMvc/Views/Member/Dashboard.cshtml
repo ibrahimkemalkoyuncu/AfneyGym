@@ -1,0 +1,103 @@
+﻿@using AfneyGym.Common.DTOs
+@using AfneyGym.Domain.Entities
+@{
+    ViewData["Title"] = "Uye Dashboard";
+    var stage = ViewBag.Stage as string ?? "NewMember";
+    var monthlyCheckIn = (int?)(ViewBag.MonthlyCheckIn) ?? 0;
+    var goals = ViewBag.Goals as List<UserGoal> ?? new List<UserGoal>();
+    var latestMetric = ViewBag.LatestMetric as BodyMetricSummaryDto;
+    var checkIns = ViewBag.CheckIns as List<CheckInDto> ?? new List<CheckInDto>();
+}
+
+<div class="space-y-6">
+    <div class="rounded-2xl border border-slate-700/60 bg-panel p-6">
+        <h2 class="text-2xl font-black text-white">Uye Dashboard</h2>
+        <p class="mt-2 text-slate-300">Mevcut asama: <span class="font-semibold text-accent">@stage</span></p>
+    </div>
+
+    <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
+        <div class="rounded-2xl border border-slate-700/60 bg-panel p-4">
+            <p class="text-xs uppercase tracking-wide text-slate-400">Bu Ay Check-in</p>
+            <p class="mt-2 text-3xl font-black text-white">@monthlyCheckIn</p>
+        </div>
+        <div class="rounded-2xl border border-slate-700/60 bg-panel p-4">
+            <p class="text-xs uppercase tracking-wide text-slate-400">Aktif Hedefler</p>
+            <p class="mt-2 text-3xl font-black text-white">@goals.Count</p>
+        </div>
+        <div class="rounded-2xl border border-slate-700/60 bg-panel p-4">
+            <p class="text-xs uppercase tracking-wide text-slate-400">Son Kilo</p>
+            <p class="mt-2 text-3xl font-black text-white">@(latestMetric?.Weight ?? 0) kg</p>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 gap-4 lg:grid-cols-2">
+        <section class="rounded-2xl border border-slate-700/60 bg-panel p-5">
+            <h3 class="text-lg font-bold text-white">Hedef Ekle</h3>
+            <form asp-action="AddGoal" method="post" class="mt-4 grid grid-cols-1 gap-3">
+                @Html.AntiForgeryToken()
+                <input name="Title" placeholder="Hedef basligi" class="rounded-lg border border-slate-600 bg-panelSoft px-3 py-2 text-sm text-white" />
+                <input name="GoalType" value="Weight" placeholder="Hedef tipi" class="rounded-lg border border-slate-600 bg-panelSoft px-3 py-2 text-sm text-white" />
+                <input type="number" step="0.1" name="StartValue" placeholder="Baslangic" class="rounded-lg border border-slate-600 bg-panelSoft px-3 py-2 text-sm text-white" />
+                <input type="number" step="0.1" name="TargetValue" placeholder="Hedef" class="rounded-lg border border-slate-600 bg-panelSoft px-3 py-2 text-sm text-white" />
+                <input type="date" name="TargetDate" class="rounded-lg border border-slate-600 bg-panelSoft px-3 py-2 text-sm text-white" />
+                <button type="submit" class="rounded-lg bg-accent px-4 py-2 text-sm font-bold text-slate-900 hover:bg-sky-300">Hedef Kaydet</button>
+            </form>
+        </section>
+
+        <section class="rounded-2xl border border-slate-700/60 bg-panel p-5">
+            <h3 class="text-lg font-bold text-white">Olcum Ekle</h3>
+            <form asp-action="AddBodyMetric" method="post" class="mt-4 grid grid-cols-1 gap-3">
+                @Html.AntiForgeryToken()
+                <input type="number" step="0.1" name="Weight" placeholder="Kilo (kg)" class="rounded-lg border border-slate-600 bg-panelSoft px-3 py-2 text-sm text-white" />
+                <input type="number" step="0.1" name="BodyFatPercentage" placeholder="Yag orani (%)" class="rounded-lg border border-slate-600 bg-panelSoft px-3 py-2 text-sm text-white" />
+                <input type="date" name="MeasurementDate" class="rounded-lg border border-slate-600 bg-panelSoft px-3 py-2 text-sm text-white" />
+                <button type="submit" class="rounded-lg bg-emerald-400 px-4 py-2 text-sm font-bold text-slate-900 hover:bg-emerald-300">Olcum Kaydet</button>
+            </form>
+        </section>
+    </div>
+
+    <section class="rounded-2xl border border-slate-700/60 bg-panel p-5">
+        <div class="mb-3 flex items-center justify-between">
+            <h3 class="text-lg font-bold text-white">Son Check-in Kayitlari</h3>
+            <div class="flex gap-2">
+                <form asp-action="CheckIn" method="post">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="rounded-lg bg-accent px-3 py-2 text-xs font-bold text-slate-900">Check-in</button>
+                </form>
+                <form asp-action="CheckOut" method="post">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="rounded-lg border border-slate-500 px-3 py-2 text-xs font-bold text-slate-200">Check-out</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="overflow-x-auto">
+            <table class="min-w-full text-sm">
+                <thead>
+                    <tr class="text-left text-xs uppercase tracking-wide text-slate-400">
+                        <th class="px-3 py-2">Giris</th>
+                        <th class="px-3 py-2">Cikis</th>
+                        <th class="px-3 py-2">Sure</th>
+                        <th class="px-3 py-2">Yontem</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (!checkIns.Any())
+                    {
+                        <tr><td colspan="4" class="px-3 py-4 text-slate-400">Kayit yok.</td></tr>
+                    }
+                    @foreach (var item in checkIns)
+                    {
+                        <tr class="border-t border-slate-700/50">
+                            <td class="px-3 py-2 text-slate-200">@item.CheckInTime.ToString("dd.MM.yyyy HH:mm")</td>
+                            <td class="px-3 py-2 text-slate-300">@(item.CheckOutTime?.ToString("dd.MM.yyyy HH:mm") ?? "-")</td>
+                            <td class="px-3 py-2 text-slate-300">@(item.DurationMinutes?.ToString() ?? "-") dk</td>
+                            <td class="px-3 py-2 text-slate-300">@item.CheckInMethod</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </section>
+</div>
+
