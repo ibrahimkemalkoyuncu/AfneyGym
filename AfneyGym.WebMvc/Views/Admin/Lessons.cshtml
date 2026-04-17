@@ -3,42 +3,41 @@
     ViewData["Title"] = "Ders Yönetimi";
 }
 
-<div class="container-fluid">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="fw-bold text-uppercase m-0">DERS <span class="text-danger">PROGRAMI</span></h2>
-        <a asp-action="CreateLesson" class="btn btn-danger px-4 shadow-sm">
-            <i class="bi bi-calendar-plus me-2"></i>YENİ DERS EKLE
+<div>
+    <div class="mb-5 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+        <h2 class="text-3xl font-black uppercase tracking-wide">DERS <span class="text-accent">PROGRAMI</span></h2>
+        <a asp-action="CreateLesson" class="inline-flex items-center gap-2 rounded-lg bg-accent px-4 py-2 text-sm font-semibold text-slate-900 hover:bg-sky-300">
+            <i class="bi bi-calendar-plus"></i> YENİ DERS EKLE
         </a>
     </div>
 
-    <div class="card bg-dark border-secondary shadow">
-        <div class="card-body p-0">
-            <div class="table-responsive">
-                <table class="table table-dark table-hover mb-0">
-                    <thead>
-                        <tr class="border-bottom border-secondary">
-                            <th class="ps-4">DERS ADI</th>
-                            <th>EĞİTMEN</th>
-                            <th>BAŞLANGIÇ</th>
-                            <th>SÜRE</th>
-                            <th>KONTENJAN</th>
-                            <th class="text-end pe-4">İŞLEMLER</th>
+    <div class="overflow-hidden rounded-2xl border border-slate-700/60 bg-panel shadow-2xl shadow-black/30">
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-slate-700/60 text-sm">
+                <thead class="bg-panelSoft">
+                    <tr class="text-left text-xs uppercase tracking-wide text-slate-400">
+                        <th class="px-5 py-3">DERS ADI</th>
+                        <th class="px-5 py-3">EĞİTMEN</th>
+                        <th class="px-5 py-3">BAŞLANGIÇ</th>
+                        <th class="px-5 py-3">SÜRE</th>
+                        <th class="px-5 py-3">KONTENJAN</th>
+                        <th class="px-5 py-3 text-right">İŞLEMLER</th>
                         </tr>
                     </thead>
-                    <tbody>
+                <tbody class="divide-y divide-slate-800/70">
                         @if (Model != null && Model.Any())
                         {
                             @foreach (var lesson in Model)
                             {
-                                <tr class="align-middle border-bottom border-dark">
-                                    <td class="ps-4 fw-bold">@lesson.Name</td>
-                                    <td>@lesson.Trainer?.FullName</td>
-                                    <td>@lesson.StartTime.ToString("dd.MM.yyyy HH:mm")</td>
-                                    <td>@((lesson.EndTime - lesson.StartTime).TotalMinutes) Dakika</td>
-                                    <td>@lesson.Capacity Kişi</td>
-                                    <td class="text-end pe-4">
-                                        <button class="btn btn-outline-info btn-sm me-1"><i class="bi bi-pencil"></i></button>
-                                        <button class="btn btn-outline-danger btn-sm"><i class="bi bi-trash"></i></button>
+                            <tr class="hover:bg-slate-800/40">
+                                    <td class="px-5 py-4 font-semibold text-white">@lesson.Name</td>
+                                    <td class="px-5 py-4 text-slate-300">@lesson.Trainer?.FullName</td>
+                                    <td class="px-5 py-4 text-slate-300">@lesson.StartTime.ToString("dd.MM.yyyy HH:mm")</td>
+                                    <td class="px-5 py-4 text-slate-300">@((lesson.EndTime - lesson.StartTime).TotalMinutes) Dakika</td>
+                                    <td class="px-5 py-4 text-slate-300">@lesson.Capacity Kişi</td>
+                                    <td class="px-5 py-4 text-right">
+                                        <button class="mr-1 inline-flex h-8 w-8 items-center justify-center rounded-lg border border-sky-400/50 text-sky-300 hover:bg-sky-500/10"><i class="bi bi-pencil"></i></button>
+                                        <button class="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-rose-400/50 text-rose-300 hover:bg-rose-500/10"><i class="bi bi-trash"></i></button>
                                     </td>
                                 </tr>
                             }
@@ -46,12 +45,11 @@
                         else
                         {
                             <tr>
-                                <td colspan="6" class="text-center py-5 text-white-50">Henüz ders programı oluşturulmadı.</td>
+                                <td colspan="6" class="px-5 py-8 text-center text-slate-400">Henüz ders programı oluşturulmadı.</td>
                             </tr>
                         }
                     </tbody>
-                </table>
-            </div>
+            </table>
         </div>
     </div>
 </div>

@@ -1,47 +1,74 @@
-﻿@model AfneyGym.Common.DTOs.UserLoginDto
+﻿@using AfneyGym.Common.DTOs
+@model UserLoginDto
 @{
     ViewData["Title"] = "Giriş Yap";
 }
 
-<div class="row justify-content-center mt-5">
-    <div class="col-md-4">
-        <div class="card shadow-lg border-0">
-            <div class="card-header text-center border-0 pt-4 bg-transparent">
-                <h2 class="fw-bold"><span style="color:#e31e24">ÜYE</span> GİRİŞİ</h2>
-                <p class="text-white-50">Hedeflerine bir adım daha yaklaş.</p>
-            </div>
-            <div class="card-body p-4">
-                @* Genel hata mesajlarını (E-posta/Şifre hatalı gibi) burada gösteriyoruz *@
-                <div asp-validation-summary="ModelOnly" class="text-danger small mb-3"></div>
-
-                <form asp-action="Login" method="post">
-                    <div class="mb-3">
-                        <label asp-for="Email" class="form-label">E-posta</label>
-                        <input asp-for="Email" class="form-control" placeholder="E-posta adresiniz" />
-                        <span asp-validation-for="Email" class="text-danger small"></span>
-                    </div>
-
-                    <div class="mb-4">
-                        <label asp-for="Password" class="form-label">Şifre</label>
-                        <input asp-for="Password" type="password" class="form-control" placeholder="••••••" />
-                        <span asp-validation-for="Password" class="text-danger small"></span>
-                    </div>
-
-                    <div class="d-grid gap-2">
-                        <button type="submit" class="btn btn-primary btn-lg">GİRİŞ YAP</button>
-                    </div>
-
-                    <div class="text-center mt-3">
-                        <span class="text-white-50 small">Henüz üye değil misin?</span>
-                        <a asp-action="Register" class="text-white small fw-bold text-decoration-none"> Hemen Katıl</a>
-                    </div>
-                </form>
-            </div>
+<div class="mx-auto flex min-h-[72vh] max-w-xl items-center">
+    <div class="w-full rounded-2xl border border-slate-700/60 bg-panel p-8 shadow-2xl shadow-black/30">
+        <div class="mb-6 text-center">
+            <h2 class="text-3xl font-black uppercase text-white">Giriş <span class="text-accent">Yap</span></h2>
+            <p class="mt-2 text-sm text-slate-400">Sınırlarını zorlamak için aramıza dön.</p>
         </div>
-    </div>
+
+        <form asp-action="Login" method="post" asp-antiforgery="true" class="space-y-5">
+            <div asp-validation-summary="ModelOnly" class="rounded-lg border border-rose-400/30 bg-rose-500/10 p-3 text-sm text-rose-200"></div>
+
+            <div>
+                <label asp-for="Email" class="mb-2 block text-xs font-semibold uppercase tracking-wide text-slate-400">E-Posta</label>
+                <div class="relative">
+                    <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-slate-500">
+                        <i class="bi bi-envelope"></i>
+                    </div>
+                    <input asp-for="Email" class="block w-full rounded-lg border border-slate-600 bg-panelSoft py-3 pl-10 pr-3 text-sm text-white placeholder-slate-500 focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30" placeholder="ornek@mail.com" />
+                </div>
+                <span asp-validation-for="Email" class="mt-1 block text-xs text-rose-300"></span>
+            </div>
+
+            <div>
+                <label asp-for="Password" class="mb-2 block text-xs font-semibold uppercase tracking-wide text-slate-400">Şifre</label>
+                <div class="relative">
+                    <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-slate-500">
+                        <i class="bi bi-shield-lock"></i>
+                    </div>
+                    <input asp-for="Password" type="password" class="block w-full rounded-lg border border-slate-600 bg-panelSoft py-3 pl-10 pr-3 text-sm text-white placeholder-slate-500 focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30" placeholder="••••••••" />
+                    <button type="button" id="togglePassword" class="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-500 hover:text-accent transition" title="Şifreyi göster/gizle">
+                        <i class="bi bi-eye" id="passwordIcon"></i>
+                    </button>
+                </div>
+                <span asp-validation-for="Password" class="mt-1 block text-xs text-rose-300"></span>
+            </div>
+
+            <button type="submit" class="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-accent px-4 py-3 text-sm font-bold text-slate-900 transition hover:bg-sky-300">
+                <i class="bi bi-box-arrow-in-right"></i> GİRİŞ YAP
+            </button>
+
+            <div class="text-center text-sm text-slate-400">
+                Hesabın yok mu?
+                <a asp-action="Register" class="font-semibold text-accent hover:text-sky-300">Hemen Kayıt Ol</a>
+            </div>
+        </form>
+        </div>
 </div>
 
 @section Scripts {
-    @* İstemci tarafı doğrulaması için *@
     <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        document.getElementById('togglePassword').addEventListener('click', function(e) {
+            e.preventDefault();
+            const passwordInput = document.getElementById('Password');
+            const passwordIcon = document.getElementById('passwordIcon');
+
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                passwordIcon.classList.remove('bi-eye');
+                passwordIcon.classList.add('bi-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                passwordIcon.classList.remove('bi-eye-slash');
+                passwordIcon.classList.add('bi-eye');
+            }
+        });
+    </script>
 }

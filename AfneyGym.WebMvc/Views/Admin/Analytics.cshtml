@@ -1,0 +1,184 @@
+﻿@model AfneyGym.Common.DTOs.AnalyticsDto
+@{
+    ViewData["Title"] = "Analytics Raporları";
+}
+
+<div class="mb-8">
+    <div class="flex items-center justify-between">
+        <div>
+            <h1 class="text-3xl font-black text-white">📊 Analytics Paneli</h1>
+            <p class="text-sm text-slate-400 mt-1">Gerçek zamanlı operasyonel metrikler ve KPI'lar</p>
+        </div>
+        <div class="text-xs text-slate-500">
+            <i class="bi bi-arrow-repeat mr-1"></i>Güncelleme: @DateTime.Now.ToString("dd.MM.yyyy HH:mm")
+        </div>
+    </div>
+</div>
+
+<!-- KPI Tablosu - 4 Sütunluk Grid -->
+<div class="mb-6 grid grid-cols-1 gap-4 lg:grid-cols-4">
+    <!-- Üyelik KPI -->
+    <div class="rounded-2xl border border-slate-700 bg-gradient-to-br from-panel to-panelSoft p-6 hover:border-slate-600 transition">
+        <div class="flex items-center justify-between">
+            <div>
+                <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">Toplam Üyeler</p>
+                <p class="mt-3 text-4xl font-black text-accent">@Model.TotalMembers.ToString("N0")</p>
+            </div>
+            <div class="text-5xl opacity-20">👥</div>
+        </div>
+    </div>
+
+    <!-- Aktif Abonelik -->
+    <div class="rounded-2xl border border-slate-700 bg-gradient-to-br from-panel to-panelSoft p-6 hover:border-slate-600 transition">
+        <div class="flex items-center justify-between">
+            <div>
+                <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">Aktif Abonelik</p>
+                <p class="mt-3 text-4xl font-black text-emerald-400">@Model.ActiveSubscriptions.ToString("N0")</p>
+            </div>
+            <div class="text-5xl opacity-20">✓</div>
+        </div>
+    </div>
+
+    <!-- Onay Bekleyen -->
+    <div class="rounded-2xl border border-slate-700 bg-gradient-to-br from-panel to-panelSoft p-6 hover:border-slate-600 transition">
+        <div class="flex items-center justify-between">
+            <div>
+                <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">Onay Bekleyen</p>
+                <p class="mt-3 text-4xl font-black text-amber-400">@Model.PendingApprovals.ToString("N0")</p>
+            </div>
+            <div class="text-5xl opacity-20">⏳</div>
+        </div>
+    </div>
+
+    <!-- Yenileme Oranı -->
+    <div class="rounded-2xl border border-slate-700 bg-gradient-to-br from-panel to-panelSoft p-6 hover:border-slate-600 transition">
+        <div class="flex items-center justify-between">
+            <div>
+                <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">Yenileme Oranı</p>
+                <p class="mt-3 text-4xl font-black text-sky-400">@Model.SubscriptionRenewalRate%</p>
+                <p class="text-xs text-slate-500 mt-2">Son 30 gün</p>
+            </div>
+            <div class="text-5xl opacity-20">📈</div>
+        </div>
+    </div>
+</div>
+
+<!-- Ders Metrikleri Section -->
+<div class="mb-6">
+    <h2 class="mb-4 text-lg font-black text-white flex items-center">
+        <i class="bi bi-calendar-event mr-2"></i>Ders Metrikleri
+    </h2>
+    <div class="grid grid-cols-1 gap-4 lg:grid-cols-4">
+        <div class="rounded-2xl border border-slate-700 bg-panel p-5 hover:bg-panelSoft transition">
+            <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">Toplam Dersler</p>
+            <p class="mt-3 text-3xl font-black text-blue-400">@Model.TotalLessons</p>
+        </div>
+        <div class="rounded-2xl border border-slate-700 bg-panel p-5 hover:bg-panelSoft transition">
+            <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">Tamamlanan</p>
+            <p class="mt-3 text-3xl font-black text-accent">@Model.CompletedLessons</p>
+        </div>
+        <div class="rounded-2xl border border-slate-700 bg-panel p-5 hover:bg-panelSoft transition">
+            <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">Katılım Oranı</p>
+            <p class="mt-3 text-3xl font-black text-emerald-400">@Model.AverageLessonAttendance.ToString("F0")%</p>
+        </div>
+        <div class="rounded-2xl border border-slate-700 bg-panel p-5 hover:bg-panelSoft transition">
+            <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">Katılmayan</p>
+            <p class="mt-3 text-3xl font-black text-rose-400">@Model.NoShowCount</p>
+        </div>
+    </div>
+</div>
+
+<!-- Ödeme Metrikleri Section -->
+<div class="mb-6">
+    <h2 class="mb-4 text-lg font-black text-white flex items-center">
+        <i class="bi bi-credit-card mr-2"></i>Ödeme Metrikleri
+    </h2>
+    <div class="grid grid-cols-1 gap-4 lg:grid-cols-4">
+        <div class="rounded-2xl border border-slate-700 bg-panel p-5 hover:bg-panelSoft transition">
+            <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">Toplam Gelir</p>
+            <p class="mt-3 text-3xl font-black text-emerald-400">@Model.TotalRevenue.ToString("C0")</p>
+        </div>
+        <div class="rounded-2xl border border-slate-700 bg-panel p-5 hover:bg-panelSoft transition">
+            <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">Başarılı</p>
+            <p class="mt-3 text-3xl font-black text-accent">@Model.SuccessfulPayments</p>
+        </div>
+        <div class="rounded-2xl border border-slate-700 bg-panel p-5 hover:bg-panelSoft transition">
+            <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">Başarısız</p>
+            <p class="mt-3 text-3xl font-black text-rose-400">@Model.FailedPayments</p>
+        </div>
+        <div class="rounded-2xl border border-slate-700 bg-panel p-5 hover:bg-panelSoft transition">
+            <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">Ort. Fiyat</p>
+            <p class="mt-3 text-3xl font-black text-blue-400">@Model.AverageSubscriptionPrice.ToString("C0")</p>
+        </div>
+    </div>
+</div>
+
+<!-- Eğitmen Metrikleri -->
+<section class="mb-6 grid grid-cols-1 gap-4 lg:grid-cols-2">
+    <div class="rounded-2xl border border-slate-700 bg-panel p-5">
+        <h3 class="text-xs font-semibold uppercase tracking-wide text-slate-400">Toplam Eğitmenler</h3>
+        <p class="mt-2 text-3xl font-black text-accent">@Model.TotalTrainers</p>
+    </div>
+    <div class="rounded-2xl border border-slate-700 bg-panel p-5">
+        <h3 class="text-xs font-semibold uppercase tracking-wide text-slate-400">Aktif Eğitmenler</h3>
+        <p class="mt-2 text-3xl font-black text-emerald-400">@Model.ActiveTrainers</p>
+    </div>
+</section>
+
+<!-- Son 7 Gün Tablosu -->
+<section class="mb-6 rounded-2xl border border-slate-700 bg-panel p-6">
+    <h2 class="mb-6 text-lg font-black text-white flex items-center">
+        <i class="bi bi-graph-up mr-2"></i>Son 7 Gün Özeti
+    </h2>
+    <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+            <thead>
+                <tr class="border-b-2 border-slate-700">
+                    <th class="py-3 px-4 text-left font-black text-slate-300">📅 Tarih</th>
+                    <th class="py-3 px-4 text-right font-black text-slate-300">Yeni Abonelik</th>
+                    <th class="py-3 px-4 text-right font-black text-slate-300">Dersler</th>
+                    <th class="py-3 px-4 text-right font-black text-slate-300">Gelir</th>
+                    <th class="py-3 px-4 text-right font-black text-slate-300">Yeni Üyeler</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var metric in Model.Last7DaysMetrics)
+                {
+                    <tr class="border-b border-slate-700/40 hover:bg-panelSoft transition">
+                        <td class="py-3 px-4 text-slate-300">
+                            <span class="font-semibold">@metric.Date.ToString("dd")</span>
+                            <span class="text-xs text-slate-500 ml-1">@metric.Date.ToString("ddd")</span>
+                        </td>
+                        <td class="py-3 px-4 text-right font-semibold text-accent">+@metric.NewSubscriptions</td>
+                        <td class="py-3 px-4 text-right font-semibold text-blue-400">@metric.LessonsHeld</td>
+                        <td class="py-3 px-4 text-right font-semibold text-emerald-400">@metric.DailyRevenue.ToString("C0")</td>
+                        <td class="py-3 px-4 text-right font-semibold text-slate-200">+@metric.Registrations</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<!-- A/B Test Sonuçları (Gelecek) -->
+<section class="mt-6 rounded-2xl border border-slate-700 bg-panel p-6">
+    <h2 class="mb-6 text-lg font-black text-white flex items-center">
+        <i class="bi bi-flask mr-2"></i>Landing Hero A/B Test
+    </h2>
+    <div class="grid grid-cols-2 gap-4">
+        <div class="rounded-lg border-2 border-slate-600 bg-gymbg/50 p-6 text-center hover:border-accent transition">
+            <p class="text-lg font-black text-accent">Varyant A</p>
+            <p class="mt-4 text-4xl font-black text-sky-400">@Model.HeroVariantACount</p>
+            <p class="mt-2 text-xs text-slate-500">görüntüleme</p>
+        </div>
+        <div class="rounded-lg border-2 border-slate-600 bg-gymbg/50 p-6 text-center hover:border-emerald-400 transition">
+            <p class="text-lg font-black text-emerald-400">Varyant B</p>
+            <p class="mt-4 text-4xl font-black text-emerald-400">@Model.HeroVariantBCount</p>
+            <p class="mt-2 text-xs text-slate-500">görüntüleme</p>
+        </div>
+    </div>
+    <p class="mt-4 text-xs text-slate-400 border-t border-slate-700 pt-4">
+        💡 <strong>Not:</strong> A/B test sonuçları anonim ziyaretci cookie kimligi ile veritabanina yazilan goruntuleme kayitlarindan hesaplanir.
+    </p>
+</section>
+

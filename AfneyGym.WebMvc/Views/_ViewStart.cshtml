@@ -1,3 +1,9 @@
 ﻿@{
-    Layout = "_Layout";
+    var controller = ViewContext.RouteData.Values["Controller"]?.ToString();
+    var action = ViewContext.RouteData.Values["Action"]?.ToString();
+
+    Layout = controller == "Admin"
+        || (controller == "Subscription" && action == "ManageRequests")
+        ? "_AdminLayout"
+        : "_Layout";
 }

@@ -1,0 +1,126 @@
+﻿@using AfneyGym.Common.DTOs
+@using AfneyGym.Domain.Entities
+@{
+    ViewData["Title"] = "Uye Detay";
+    var member = ViewBag.Member as User;
+    var stage = ViewBag.Stage as string ?? "Unknown";
+    var monthlyCheckIn = (int?)(ViewBag.MonthlyCheckIn) ?? 0;
+    var checkIns = ViewBag.CheckIns as List<CheckInDto> ?? new List<CheckInDto>();
+    var goals = ViewBag.Goals as List<UserGoal> ?? new List<UserGoal>();
+    var metrics = ViewBag.Metrics as List<UserBodyMetric> ?? new List<UserBodyMetric>();
+    var latestMetric = ViewBag.LatestMetric as BodyMetricSummaryDto;
+}
+
+@if (member == null)
+{
+    <div class="rounded-lg border border-rose-400/50 bg-rose-500/10 p-4 text-rose-200">Uye bilgisi bulunamadi.</div>
+}
+else
+{
+    <div class="space-y-6">
+        <div class="rounded-2xl border border-slate-700/60 bg-panel p-6">
+            <h2 class="text-2xl font-black text-white">@member.FirstName @member.LastName</h2>
+            <p class="mt-2 text-slate-300">@member.Email</p>
+            <div class="mt-4 flex flex-wrap gap-2 text-xs">
+                <span class="rounded-full bg-accent/20 px-3 py-1 font-semibold text-accent">Asama: @stage</span>
+                <span class="rounded-full bg-slate-700 px-3 py-1 text-slate-200">Bu ay check-in: @monthlyCheckIn</span>
+                <span class="rounded-full bg-slate-700 px-3 py-1 text-slate-200">Aktif hedef: @goals.Count</span>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 gap-4 lg:grid-cols-2">
+            <section class="rounded-2xl border border-slate-700/60 bg-panel p-5">
+                <h3 class="text-lg font-bold text-white">Admin Check-in</h3>
+                <form asp-action="CheckInMember" method="post" class="mt-4">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="id" value="@member.Id" />
+                    <button type="submit" class="rounded-lg bg-accent px-4 py-2 text-sm font-bold text-slate-900 hover:bg-sky-300">Uyeyi Check-in Yap</button>
+                </form>
+
+                <h4 class="mt-6 text-sm font-bold uppercase tracking-wide text-slate-300">Son Kayitlar</h4>
+                <div class="mt-2 space-y-2 text-sm">
+                    @if (!checkIns.Any())
+                    {
+                        <p class="text-slate-400">Check-in kaydi yok.</p>
+                    }
+                    @foreach (var item in checkIns.Take(8))
+                    {
+                        <div class="flex items-center justify-between rounded-lg bg-panelSoft px-3 py-2">
+                            <span class="text-slate-200">@item.CheckInTime.ToString("dd.MM.yyyy HH:mm")</span>
+                            <span class="text-xs text-slate-400">@(item.DurationMinutes?.ToString() ?? "-") dk</span>
+                        </div>
+                    }
+                </div>
+            </section>
+
+            <section class="rounded-2xl border border-slate-700/60 bg-panel p-5">
+                <h3 class="text-lg font-bold text-white">Vucut Olcumu Ekle</h3>
+                <form asp-action="AddBodyMetric" method="post" class="mt-4 grid grid-cols-1 gap-3">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="id" value="@member.Id" />
+                    <input type="number" step="0.1" name="Weight" placeholder="Kilo (kg)" class="rounded-lg border border-slate-600 bg-panelSoft px-3 py-2 text-sm text-white" />
+                    <input type="number" step="0.1" name="BodyFatPercentage" placeholder="Yag orani (%)" class="rounded-lg border border-slate-600 bg-panelSoft px-3 py-2 text-sm text-white" />
+                    <input type="date" name="MeasurementDate" class="rounded-lg border border-slate-600 bg-panelSoft px-3 py-2 text-sm text-white" />
+                    <button type="submit" class="rounded-lg bg-emerald-400 px-4 py-2 text-sm font-bold text-slate-900 hover:bg-emerald-300">Olcum Kaydet</button>
+                </form>
+
+                <div class="mt-5 rounded-lg bg-panelSoft p-3 text-sm text-slate-200">
+                    <p>Son olcum: <span class="font-semibold text-white">@(latestMetric?.Weight ?? 0) kg</span></p>
+                    <p>Aylik degisim: <span class="font-semibold text-white">@(latestMetric?.WeightChangeMonth ?? 0) kg</span></p>
+                </div>
+            </section>
+        </div>
+
+        <section class="rounded-2xl border border-slate-700/60 bg-panel p-5">
+            <h3 class="text-lg font-bold text-white">Aktif Hedefler</h3>
+            <div class="mt-3 grid grid-cols-1 gap-3 md:grid-cols-2">
+                @if (!goals.Any())
+                {
+                    <p class="text-slate-400">Aktif hedef bulunmuyor.</p>
+                }
+                @foreach (var goal in goals)
+                {
+                    var progressWidth = $"{Math.Clamp((double)goal.ProgressPercentage, 0, 100)}%";
+                    <div class="rounded-lg bg-panelSoft p-4">
+                        <p class="font-semibold text-white">@goal.Title</p>
+                        <p class="mt-1 text-xs text-slate-400">@goal.GoalType - Hedef: @goal.TargetValue</p>
+                        <div class="mt-3 h-2 rounded bg-slate-700">
+                            <div class="h-2 rounded bg-accent" style="width:@progressWidth"></div>
+                        </div>
+                        <p class="mt-1 text-xs text-slate-300">%@goal.ProgressPercentage</p>
+                    </div>
+                }
+            </div>
+        </section>
+
+        <section class="rounded-2xl border border-slate-700/60 bg-panel p-5">
+            <h3 class="text-lg font-bold text-white">Olcum Gecmisi</h3>
+            <div class="mt-3 overflow-x-auto">
+                <table class="min-w-full text-sm">
+                    <thead>
+                        <tr class="text-left text-xs uppercase tracking-wide text-slate-400">
+                            <th class="px-3 py-2">Tarih</th>
+                            <th class="px-3 py-2">Kilo</th>
+                            <th class="px-3 py-2">Yag %</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (!metrics.Any())
+                        {
+                            <tr><td colspan="3" class="px-3 py-4 text-slate-400">Kayit bulunamadi.</td></tr>
+                        }
+                        @foreach (var item in metrics)
+                        {
+                            <tr class="border-t border-slate-700/50">
+                                <td class="px-3 py-2 text-slate-200">@item.MeasurementDate.ToString("dd.MM.yyyy")</td>
+                                <td class="px-3 py-2 text-slate-300">@item.Weight</td>
+                                <td class="px-3 py-2 text-slate-300">@(item.BodyFatPercentage?.ToString() ?? "-")</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+}
+

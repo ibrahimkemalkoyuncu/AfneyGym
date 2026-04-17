@@ -34,4 +34,19 @@ public class EmailService : IEmailService
 
         await client.SendMailAsync(mailMessage);
     }
+
+    public async Task SendLessonReminderAsync(string toEmail, string memberName, string lessonName, DateTime lessonTime)
+    {
+        var body = $@"
+            <h2>Ders Hatırlatması</h2>
+            <p>Merhaba {memberName},</p>
+            <p><strong>{lessonName}</strong> dersiniz <strong>{lessonTime:dd.MM.yyyy HH:mm}</strong>'de başlayacak.</p>
+            <p>Unutmayın ve zamanında gelin!</p>
+            <hr>
+            <p><small>Bu bir otomatik hatırlatma e-postasıdır.</small></p>
+        ";
+
+        await SendEmailAsync(toEmail, $"⏰ Ders Hatırlatması: {lessonName}", body);
+    }
 }
+

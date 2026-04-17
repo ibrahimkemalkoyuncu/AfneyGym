@@ -1,5 +1,6 @@
 using AfneyGym.Data.Context;
 using AfneyGym.Domain.Interfaces;
+using AfneyGym.Service.Hubs;
 using AfneyGym.Service.Services;
 using AfneyGym.Common.DTOs;
 using Microsoft.EntityFrameworkCore;
@@ -23,12 +24,21 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(connectionString));
 
 builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
+builder.Services.Configure<IyzicoSettings>(builder.Configuration.GetSection("IyzicoSettings"));
 
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddScoped<INotificationService, NotificationService>();
+builder.Services.AddScoped<IIyzicoGateway, IyzicoGatewayService>();
 builder.Services.AddScoped<IDashboardService, DashboardService>();
 builder.Services.AddScoped<ITrainerService, TrainerService>();
 builder.Services.AddScoped<ILessonService, LessonService>();
+builder.Services.AddScoped<IMemberLifecycleService, MemberLifecycleService>();
+builder.Services.AddScoped<SubscriptionRenewalService>();
+
+builder.Services.AddHostedService<AfneyGym.Service.HostedServices.AutoRenewHostedService>();
+builder.Services.AddHostedService<AfneyGym.Service.HostedServices.LessonReminderHostedService>();
+builder.Services.AddHostedService<AfneyGym.Service.HostedServices.MemberLifecycleHostedService>();
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
@@ -38,6 +48,8 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
     });
 
 builder.Services.AddControllersWithViews();
+builder.Services.AddSignalR();
+builder.Services.AddHealthChecks();
 
 var app = builder.Build();
 
@@ -61,6 +73,10 @@ app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+app.MapHub<NotificationHub>("/hubs/notifications");
+app.MapHealthChecks("/health");
+app.MapGet("/ready", () => Results.Ok(new { status = "ready", timestamp = DateTime.UtcNow }));
 
 try
 {

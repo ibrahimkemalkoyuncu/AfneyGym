@@ -3,6 +3,8 @@
   <Project Path="AfneyGym.Data/AfneyGym.Data.csproj" />
   <Project Path="AfneyGym.Domain/AfneyGym.Domain.csproj" />
   <Project Path="AfneyGym.Service/AfneyGym.Service.csproj" />
+  <Project Path="AfneyGym.Tests/AfneyGym.Tests.csproj" />
   <Project Path="AfneyGym.WebApi/AfneyGym.WebApi.csproj" />
+  <Project Path="AfneyGym.E2E/AfneyGym.E2E.csproj" />
   <Project Path="AfneyGym.WebMvc/AfneyGym.WebMvc.csproj" />
 </Solution>

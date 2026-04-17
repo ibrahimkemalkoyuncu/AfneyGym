@@ -1,0 +1,70 @@
+﻿@model AfneyGym.Common.DTOs.UserProfileDto
+@{
+    ViewData["Title"] = "Profilim";
+}
+
+<div class="space-y-6">
+    <div class="rounded-2xl border border-slate-700/60 bg-panel p-8 shadow-2xl shadow-black/30">
+        <div class="grid grid-cols-1 gap-6 md:grid-cols-12 md:items-center">
+            <div class="md:col-span-2">
+                <div class="flex h-24 w-24 items-center justify-center rounded-full bg-accent text-3xl font-black text-slate-900">
+                    @Model.FullName[0]
+                </div>
+            </div>
+            <div class="md:col-span-7">
+                <h2 class="text-3xl font-black text-white">@Model.FullName</h2>
+                <p class="text-slate-400">@Model.Email | <span class="text-accent">@Model.GymName</span></p>
+                @if (Model.SubscriptionEndDate.HasValue)
+                {
+                    <span class="inline-flex rounded-full bg-emerald-500/20 px-3 py-1 text-xs font-semibold text-emerald-300">Abonelik: @Model.SubscriptionEndDate.Value.ToString("dd.MM.yyyy") tarihine kadar aktif</span>
+                }
+                else
+                {
+                    <span class="inline-flex rounded-full bg-amber-500/20 px-3 py-1 text-xs font-semibold text-amber-300">Aktif abonelik bulunamadı</span>
+                }
+            </div>
+            <div class="md:col-span-3">
+                <div class="rounded-xl border border-slate-700 bg-panelSoft p-4 text-center">
+                    <div class="text-xs uppercase tracking-wide text-slate-400">Toplam Antrenman</div>
+                    <div class="text-3xl font-black text-accent">@Model.TotalAttendedLessons</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h4 class="text-xl font-black uppercase"><i class="bi bi-clock-history mr-2 text-accent"></i>Katılım <span class="text-accent">Geçmişi</span></h4>
+
+    <div class="overflow-hidden rounded-2xl border border-slate-700/60 bg-panel shadow-2xl shadow-black/30">
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-slate-700/60 text-sm">
+                <thead class="bg-panelSoft">
+                    <tr class="text-left text-xs uppercase tracking-wide text-slate-400">
+                        <th class="px-5 py-3">DERS</th>
+                        <th class="px-5 py-3">EĞİTMEN</th>
+                        <th class="px-5 py-3">TARİH</th>
+                        <th class="px-5 py-3 text-right">SAAT</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-800/70">
+                    @if (!Model.AttendedLessons.Any())
+                    {
+                        <tr>
+                            <td colspan="4" class="px-5 py-8 text-center text-slate-400">Henüz bir derse katılım sağlamadınız.</td>
+                        </tr>
+                    }
+                    @foreach (var item in Model.AttendedLessons)
+                    {
+                        <tr class="hover:bg-slate-800/40">
+                            <td class="px-5 py-4 font-semibold text-white">@item.LessonName</td>
+                            <td class="px-5 py-4 text-slate-300">@item.TrainerName</td>
+                            <td class="px-5 py-4 text-slate-400">@item.LessonDate.ToString("dd.MM.yyyy")</td>
+                            <td class="px-5 py-4 text-right">
+                                <span class="inline-flex rounded-full border border-slate-600 px-2 py-1 text-xs text-slate-300">@item.TimeSlot</span>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

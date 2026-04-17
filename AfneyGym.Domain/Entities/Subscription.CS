@@ -23,15 +23,24 @@ public class Subscription : BaseEntity
     // Üyelik Durumu
     public SubscriptionStatus Status { get; set; }
 
+    // Otomatik yenileme açık üyelikler arka plan işleyici ile uzatılır.
+    public bool AutoRenew { get; set; }
+    public DateTime? LastRenewalDate { get; set; }
+    public DateTime? CanceledAt { get; set; }
+
     // Teknik Açıklama: Üyeliğin dondurulup dondurulmadığı kontrolü
     public bool IsFrozen { get; set; }
     public DateTime? FreezeDate { get; set; }
+
+    public virtual ICollection<Payment> Payments { get; set; } = new List<Payment>();
 }
+
 
 public enum SubscriptionStatus
 {
-    Active = 1,     // Aktif ve kullanılabilir
-    Expired = 2,    // Süresi dolmuş
-    Canceled = 3,   // İptal edilmiş
-    Pending = 4     // Ödeme bekliyor veya onay bekliyor
+    Pending = 1,    // Ödeme/Onay bekliyor
+    Active = 2,     // Onaylanmış ve süresi devam ediyor
+    Rejected = 3,   // Ödeme teyit edilemedi, reddedildi
+    Expired = 4,    // Süresi dolmuş
+    Canceled = 5    // Kullanıcı veya Admin tarafından iptal edildi
 }

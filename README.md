@@ -44,9 +44,12 @@ dotnet run --project AfneyGym.WebApi/AfneyGym.WebApi.csproj
 dotnet run --project AfneyGym.WebMvc/AfneyGym.WebMvc.csproj
 ```
 
-## CI
+## Test and Deployment Docs
 
-GitHub Actions workflow is defined in .github/workflows/dotnet-ci.yml and runs restore and build on pushes and pull requests.
+- Test guide: `TESTING_README.md`
+- Deployment readiness: `DEPLOYMENT_README.md`
+
+> Not: Depoda su an zorunlu bir `.github/workflows` pipeline dosyasi bulunmuyor.
 
 ## Branching Suggestion
 

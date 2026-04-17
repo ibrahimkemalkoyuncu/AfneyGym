@@ -52,6 +52,137 @@ namespace AfneyGym.Data.Migrations
                     b.ToTable("Gyms");
                 });
 
+            modelBuilder.Entity("AfneyGym.Domain.Entities.GymCheckIn", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("CheckInMethod")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CheckInTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("CheckOutTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("GymId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Notes")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId", "CheckInTime");
+
+                    b.ToTable("GymCheckIns");
+                });
+
+            modelBuilder.Entity("AfneyGym.Domain.Entities.HeroVariantExposure", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Variant")
+                        .IsRequired()
+                        .HasMaxLength(1)
+                        .HasColumnType("nvarchar(1)");
+
+                    b.Property<string>("VisitorId")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Variant");
+
+                    b.HasIndex("VisitorId")
+                        .IsUnique();
+
+                    b.ToTable("HeroVariantExposures");
+                });
+
+            modelBuilder.Entity("AfneyGym.Domain.Entities.Invoice", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("EmailSent")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("HtmlReceipt")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("InvoiceNumber")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("IssuedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("PaymentId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("PdfRelativePath")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("InvoiceNumber")
+                        .IsUnique();
+
+                    b.HasIndex("IssuedAt");
+
+                    b.HasIndex("PaymentId")
+                        .IsUnique();
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Invoices");
+                });
+
             modelBuilder.Entity("AfneyGym.Domain.Entities.Lesson", b =>
                 {
                     b.Property<Guid>("Id")
@@ -107,13 +238,80 @@ namespace AfneyGym.Data.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("EnrollmentDate")
-                        .HasColumnType("datetime2");
+                    b.Property<bool>("IsAttended")
+                        .HasColumnType("bit");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
                     b.Property<Guid>("LessonId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("ReminderSentAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ReminderSentAt");
+
+                    b.HasIndex("UserId");
+
+                    b.HasIndex("LessonId", "UserId")
+                        .IsUnique();
+
+                    b.ToTable("LessonAttendees");
+                });
+
+            modelBuilder.Entity("AfneyGym.Domain.Entities.Payment", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("Amount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Currency")
+                        .IsRequired()
+                        .HasMaxLength(8)
+                        .HasColumnType("nvarchar(8)");
+
+                    b.Property<string>("ExternalPaymentId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ExternalReference")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Note")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("PaidAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Provider")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("nvarchar(32)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("SubscriptionId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime?>("UpdatedAt")
@@ -124,12 +322,16 @@ namespace AfneyGym.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId");
-
-                    b.HasIndex("LessonId", "UserId")
+                    b.HasIndex("ExternalReference")
                         .IsUnique();
 
-                    b.ToTable("LessonAttendees");
+                    b.HasIndex("Status");
+
+                    b.HasIndex("SubscriptionId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Payments");
                 });
 
             modelBuilder.Entity("AfneyGym.Domain.Entities.Subscription", b =>
@@ -137,6 +339,12 @@ namespace AfneyGym.Data.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("AutoRenew")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("CanceledAt")
+                        .HasColumnType("datetime2");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -152,6 +360,9 @@ namespace AfneyGym.Data.Migrations
 
                     b.Property<bool>("IsFrozen")
                         .HasColumnType("bit");
+
+                    b.Property<DateTime?>("LastRenewalDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("PlanName")
                         .IsRequired()
@@ -175,7 +386,11 @@ namespace AfneyGym.Data.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Status");
+
                     b.HasIndex("UserId");
+
+                    b.HasIndex("AutoRenew", "EndDate");
 
                     b.ToTable("Subscriptions");
                 });
@@ -191,6 +406,10 @@ namespace AfneyGym.Data.Migrations
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("FullName")
                         .IsRequired()
@@ -213,7 +432,7 @@ namespace AfneyGym.Data.Migrations
                     b.ToTable("Trainers");
                 });
 
-            modelBuilder.Entity("User", b =>
+            modelBuilder.Entity("AfneyGym.Domain.Entities.User", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -241,9 +460,6 @@ namespace AfneyGym.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid?>("LessonId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<string>("PasswordHash")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -264,9 +480,210 @@ namespace AfneyGym.Data.Migrations
 
                     b.HasIndex("GymId");
 
-                    b.HasIndex("LessonId");
-
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("AfneyGym.Domain.Entities.UserBodyMetric", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal?>("ArmCircumference")
+                        .HasPrecision(6, 2)
+                        .HasColumnType("decimal(6,2)");
+
+                    b.Property<decimal?>("BMI")
+                        .HasPrecision(5, 2)
+                        .HasColumnType("decimal(5,2)");
+
+                    b.Property<decimal?>("BodyFatPercentage")
+                        .HasPrecision(5, 2)
+                        .HasColumnType("decimal(5,2)");
+
+                    b.Property<decimal?>("ChestCircumference")
+                        .HasPrecision(6, 2)
+                        .HasColumnType("decimal(6,2)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal?>("HipCircumference")
+                        .HasPrecision(6, 2)
+                        .HasColumnType("decimal(6,2)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("MeasurementDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal?>("MuscleMass")
+                        .HasPrecision(5, 2)
+                        .HasColumnType("decimal(5,2)");
+
+                    b.Property<string>("Notes")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal?>("WaistCircumference")
+                        .HasPrecision(6, 2)
+                        .HasColumnType("decimal(6,2)");
+
+                    b.Property<decimal>("Weight")
+                        .HasPrecision(5, 2)
+                        .HasColumnType("decimal(5,2)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId", "MeasurementDate")
+                        .IsUnique();
+
+                    b.ToTable("UserBodyMetrics");
+                });
+
+            modelBuilder.Entity("AfneyGym.Domain.Entities.UserGoal", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("CompletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal>("CurrentValue")
+                        .HasPrecision(10, 2)
+                        .HasColumnType("decimal(10,2)");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("GoalType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<decimal>("StartValue")
+                        .HasPrecision(10, 2)
+                        .HasColumnType("decimal(10,2)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("TargetDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal>("TargetValue")
+                        .HasPrecision(10, 2)
+                        .HasColumnType("decimal(10,2)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId", "Status");
+
+                    b.ToTable("UserGoals");
+                });
+
+            modelBuilder.Entity("AfneyGym.Domain.Entities.UserLifecycleStatus", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("CurrentStage")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("LastReminderDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("ReactivatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("ReminderEmailSent")
+                        .HasColumnType("bit");
+
+                    b.Property<int?>("RiskScore")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("TransitionDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("TransitionReason")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RiskScore");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.HasIndex("UserId", "CurrentStage")
+                        .IsUnique();
+
+                    b.ToTable("UserLifecycleStatuses");
+                });
+
+            modelBuilder.Entity("AfneyGym.Domain.Entities.GymCheckIn", b =>
+                {
+                    b.HasOne("AfneyGym.Domain.Entities.User", "User")
+                        .WithMany("CheckIns")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("AfneyGym.Domain.Entities.Invoice", b =>
+                {
+                    b.HasOne("AfneyGym.Domain.Entities.Payment", "Payment")
+                        .WithOne("Invoice")
+                        .HasForeignKey("AfneyGym.Domain.Entities.Invoice", "PaymentId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("AfneyGym.Domain.Entities.User", "User")
+                        .WithMany("Invoices")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Payment");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("AfneyGym.Domain.Entities.Lesson", b =>
@@ -291,13 +708,13 @@ namespace AfneyGym.Data.Migrations
             modelBuilder.Entity("AfneyGym.Domain.Entities.LessonAttendee", b =>
                 {
                     b.HasOne("AfneyGym.Domain.Entities.Lesson", "Lesson")
-                        .WithMany()
+                        .WithMany("Attendees")
                         .HasForeignKey("LessonId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("User", "User")
-                        .WithMany()
+                    b.HasOne("AfneyGym.Domain.Entities.User", "User")
+                        .WithMany("Attendees")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -307,9 +724,28 @@ namespace AfneyGym.Data.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("AfneyGym.Domain.Entities.Payment", b =>
+                {
+                    b.HasOne("AfneyGym.Domain.Entities.Subscription", "Subscription")
+                        .WithMany("Payments")
+                        .HasForeignKey("SubscriptionId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("AfneyGym.Domain.Entities.User", "User")
+                        .WithMany("Payments")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Subscription");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("AfneyGym.Domain.Entities.Subscription", b =>
                 {
-                    b.HasOne("User", "User")
+                    b.HasOne("AfneyGym.Domain.Entities.User", "User")
                         .WithMany("Subscriptions")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -318,15 +754,46 @@ namespace AfneyGym.Data.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("User", b =>
+            modelBuilder.Entity("AfneyGym.Domain.Entities.User", b =>
                 {
-                    b.HasOne("AfneyGym.Domain.Entities.Gym", null)
+                    b.HasOne("AfneyGym.Domain.Entities.Gym", "Gym")
                         .WithMany("Members")
                         .HasForeignKey("GymId");
 
-                    b.HasOne("AfneyGym.Domain.Entities.Lesson", null)
-                        .WithMany("Attendees")
-                        .HasForeignKey("LessonId");
+                    b.Navigation("Gym");
+                });
+
+            modelBuilder.Entity("AfneyGym.Domain.Entities.UserBodyMetric", b =>
+                {
+                    b.HasOne("AfneyGym.Domain.Entities.User", "User")
+                        .WithMany("BodyMetrics")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("AfneyGym.Domain.Entities.UserGoal", b =>
+                {
+                    b.HasOne("AfneyGym.Domain.Entities.User", "User")
+                        .WithMany("Goals")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("AfneyGym.Domain.Entities.UserLifecycleStatus", b =>
+                {
+                    b.HasOne("AfneyGym.Domain.Entities.User", "User")
+                        .WithOne("LifecycleStatus")
+                        .HasForeignKey("AfneyGym.Domain.Entities.UserLifecycleStatus", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("AfneyGym.Domain.Entities.Gym", b =>
@@ -339,13 +806,37 @@ namespace AfneyGym.Data.Migrations
                     b.Navigation("Attendees");
                 });
 
+            modelBuilder.Entity("AfneyGym.Domain.Entities.Payment", b =>
+                {
+                    b.Navigation("Invoice");
+                });
+
+            modelBuilder.Entity("AfneyGym.Domain.Entities.Subscription", b =>
+                {
+                    b.Navigation("Payments");
+                });
+
             modelBuilder.Entity("AfneyGym.Domain.Entities.Trainer", b =>
                 {
                     b.Navigation("Lessons");
                 });
 
-            modelBuilder.Entity("User", b =>
+            modelBuilder.Entity("AfneyGym.Domain.Entities.User", b =>
                 {
+                    b.Navigation("Attendees");
+
+                    b.Navigation("BodyMetrics");
+
+                    b.Navigation("CheckIns");
+
+                    b.Navigation("Goals");
+
+                    b.Navigation("Invoices");
+
+                    b.Navigation("LifecycleStatus");
+
+                    b.Navigation("Payments");
+
                     b.Navigation("Subscriptions");
                 });
 #pragma warning restore 612, 618

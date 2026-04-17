@@ -66,6 +66,7 @@ using AfneyGym.Domain.Interfaces;
 using AfneyGym.Common.DTOs;
 using Microsoft.EntityFrameworkCore;
 using BC = BCrypt.Net.BCrypt;
+using AfneyGym.Common.Enums;
 
 namespace AfneyGym.Service.Services;
 

@@ -1,0 +1,93 @@
+﻿@using AfneyGym.Domain.Entities
+@model List<Lesson>
+@{
+    ViewData["Title"] = "Dersler";
+    var currentUserIdClaim = User.FindFirst("UserId")?.Value;
+    var currentUserId = Guid.TryParse(currentUserIdClaim, out var parsedUserId) ? parsedUserId : Guid.Empty;
+}
+
+<div class="mb-6 flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
+    <div>
+        <h1 class="text-2xl font-black text-white">Ders Takvimi</h1>
+        <p class="text-sm text-slate-400">Sana uygun dersi sec, kontenjani gor ve tek tikla kayit ol.</p>
+    </div>
+    <a asp-controller="Subscription" asp-action="Index" class="inline-flex items-center gap-2 rounded-lg border border-slate-500 px-3 py-2 text-sm text-slate-200 hover:bg-panelSoft">
+        <i class="bi bi-credit-card"></i> Uyelik Durumu
+    </a>
+</div>
+
+<div class="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
+    @foreach (var lesson in Model)
+    {
+        var attendeeCount = lesson.Attendees.Count(a => !a.IsDeleted);
+        var spotsLeft = lesson.Capacity - attendeeCount;
+        var isFull = spotsLeft <= 0;
+        var isRegistered = currentUserId != Guid.Empty && lesson.Attendees.Any(a => !a.IsDeleted && a.UserId == currentUserId);
+
+        <div class="h-full rounded-2xl border border-slate-700/60 bg-panel p-5 shadow-xl shadow-black/30">
+            <h5 class="text-lg font-black uppercase text-accent">@lesson.Name</h5>
+            <p class="mt-2 text-sm text-slate-400">@lesson.Description</p>
+            <div class="my-4 h-px bg-slate-700/70"></div>
+            <div class="mb-4 flex justify-between text-xs text-slate-300">
+                <span><i class="bi bi-person-badge mr-1"></i> @lesson.Trainer?.FullName</span>
+                <span><i class="bi bi-people mr-1"></i> @attendeeCount / @lesson.Capacity</span>
+            </div>
+
+            <div class="mb-4">
+                @if (isRegistered)
+                {
+                    <span class="inline-flex rounded-full bg-sky-500/20 px-2 py-1 text-xs font-bold text-sky-300">KAYITLI</span>
+                }
+                else if (isFull)
+                {
+                    <span class="inline-flex rounded-full bg-rose-500/20 px-2 py-1 text-xs font-bold text-rose-300">DOLU</span>
+                }
+                else if (spotsLeft <= 2)
+                {
+                    <span class="inline-flex rounded-full bg-amber-500/20 px-2 py-1 text-xs font-bold text-amber-300">SON @spotsLeft YER</span>
+                }
+                else
+                {
+                    <span class="inline-flex rounded-full bg-emerald-500/20 px-2 py-1 text-xs font-bold text-emerald-300">MUSAIT</span>
+                }
+            </div>
+
+            @if (User.Identity?.IsAuthenticated == true)
+            {
+                if (isRegistered)
+                {
+                    <form asp-controller="Home" asp-action="CancelJoin" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="lessonId" value="@lesson.Id" />
+
+                        <button type="submit" class="inline-flex w-full items-center justify-center rounded-lg border border-rose-400/60 px-4 py-3 text-sm font-bold text-rose-300 hover:bg-rose-500/10">
+                            KAYDI IPTAL ET
+                        </button>
+                    </form>
+                }
+                else if (isFull)
+                {
+                    <button type="button" disabled class="inline-flex w-full cursor-not-allowed items-center justify-center rounded-lg border border-slate-600 px-4 py-3 text-sm font-bold text-slate-400">
+                        KONTENJAN DOLU
+                    </button>
+                }
+                else
+                {
+                    <form asp-controller="Home" asp-action="JoinLesson" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="lessonId" value="@lesson.Id" />
+
+                        <button type="submit" class="inline-flex w-full items-center justify-center rounded-lg bg-accent px-4 py-3 text-sm font-bold text-slate-900 hover:bg-sky-300">
+                            DERSE KATIL
+                        </button>
+                    </form>
+                }
+            }
+            else
+            {
+                <a asp-controller="Account" asp-action="Login" class="inline-flex w-full items-center justify-center rounded-lg border border-slate-500 px-4 py-3 text-sm font-semibold text-slate-200 hover:bg-panelSoft">Giris Yap ve Katil</a>
+            }
+        </div>
+    }
+</div>
+

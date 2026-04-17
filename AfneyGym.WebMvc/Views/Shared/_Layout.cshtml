@@ -4,112 +4,123 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - AfneyGym</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        gymbg: "#0b1020",
+                        panel: "#121a2f",
+                        panelSoft: "#1a2440",
+                        accent: "#0ea5e9",
+                        accent2: "#14b8a6"
+                    },
+                    boxShadow: {
+                        glow: "0 10px 30px rgba(14,165,233,0.25)"
+                    }
+                }
+            }
+        };
+    </script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
-    <style>
-        :root { --sidebar-width: 250px; --sidebar-collapsed-width: 80px; --primary-red: #e31e24; --dark-bg: #0b0b0b; }
-        body { background-color: var(--dark-bg); color: #f8f9fa; font-family: 'Inter', sans-serif; overflow-x: hidden; margin: 0; }
-        #sidebar { width: var(--sidebar-width); height: 100vh; position: fixed; background: #000; transition: all 0.3s ease-in-out; border-right: 1px solid #333; z-index: 1050; left: 0; top: 0; }
-        #sidebar.active { width: var(--sidebar-collapsed-width); }
-        #content { transition: all 0.3s ease-in-out; min-height: 100vh; display: flex; flex-direction: column; }
-        .has-sidebar { margin-left: var(--sidebar-width); width: calc(100% - var(--sidebar-width)); }
-        #sidebar.active + .has-sidebar { margin-left: var(--sidebar-collapsed-width); width: calc(100% - var(--sidebar-collapsed-width)); }
-        .no-sidebar { margin-left: 0; width: 100%; }
-        .nav-link { color: #ccc; padding: 15px 25px; display: flex; align-items: center; gap: 15px; text-decoration: none; border-left: 4px solid transparent; }
-        .nav-link:hover, .nav-link.active { color: #fff; background: rgba(227, 30, 36, 0.1); border-left: 4px solid var(--primary-red); }
-        .sidebar-header { padding: 25px; height: 80px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #222; }
-    </style>
 </head>
-<body>
-
-    @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
-    {
-        <nav id="sidebar">
-            <div class="sidebar-header">
-                <h4 class="fw-bold mb-0 text-white">AFNEY<span style="color:var(--primary-red)">GYM</span></h4>
-                <button type="button" id="sidebarCollapse" class="btn btn-dark btn-sm"><i class="bi bi-list"></i></button>
+<body class="bg-gymbg text-slate-100 min-h-screen">
+    <nav class="sticky top-0 z-20 border-b border-slate-700/50 bg-panel/90 px-6 py-4 backdrop-blur-xl">
+        <div class="mx-auto flex max-w-7xl items-center justify-between">
+            <div class="flex items-center gap-4">
+                <a class="text-xl font-black tracking-wide" asp-controller="Home" asp-action="Index">AFNEY<span class="text-accent">GYM</span></a>
+                <a asp-controller="Home" asp-action="Index" class="text-sm text-slate-300 hover:text-white">Ana Sayfa</a>
+                <a asp-controller="Home" asp-action="Lessons" class="text-sm text-slate-300 hover:text-white">Dersler</a>
+                @if (User.Identity?.IsAuthenticated == true && User.IsInRole("Member"))
+                {
+                    <a asp-controller="Member" asp-action="Dashboard" class="text-sm text-slate-300 hover:text-white">Panelim</a>
+                }
             </div>
-            <ul class="nav flex-column mt-3">
-                <li><a class="nav-link" asp-controller="Admin" asp-action="Dashboard"><i class="bi bi-speedometer2"></i> <span class="link-text">Dashboard</span></a></li>
-                <li><a class="nav-link" asp-controller="Admin" asp-action="Members"><i class="bi bi-people"></i> <span class="link-text">Kullanıcılar</span></a></li>
-                <li><a class="nav-link" asp-controller="Admin" asp-action="Trainers"><i class="bi bi-person-badge"></i> <span class="link-text">Eğitmenler</span></a></li>
-                <li><a class="nav-link" asp-controller="Admin" asp-action="Lessons"><i class="bi bi-calendar-event"></i> <span class="link-text">Dersler</span></a></li>
-                <li class="mt-auto"><a class="nav-link text-danger" asp-controller="Account" asp-action="Logout"><i class="bi bi-box-arrow-right"></i> <span class="link-text">Çıkış</span></a></li>
-            </ul>
-        </nav>
-    }
-
-    <div id="content" class="@(User.Identity.IsAuthenticated && User.IsInRole("Admin") ? "has-sidebar" : "no-sidebar")">
-        @if (!User.IsInRole("Admin"))
-        {
-            <nav class="navbar navbar-expand-lg navbar-dark bg-black border-bottom border-secondary p-3">
-                <div class="container-fluid">
-                    <a class="navbar-brand fw-bold" asp-controller="Home" asp-action="Index">AFNEY<span style="color:var(--primary-red)">GYM</span></a>
-                    <div class="ms-auto d-flex align-items-center">
-                        @if (User.Identity.IsAuthenticated)
-                        {
-                            <span class="text-white me-3 small">Merhaba, @User.Identity.Name</span>
-                            <a asp-controller="Account" asp-action="Logout" class="btn btn-outline-danger btn-sm">Çıkış</a>
-                        }
-                        else
-                        {
-                            <a asp-controller="Account" asp-action="Login" class="btn btn-outline-light btn-sm me-2">Giriş Yap</a>
-                            <a asp-controller="Account" asp-action="Register" class="btn btn-danger btn-sm">Üye Ol</a>
-                        }
-                    </div>
-                </div>
-            </nav>
-        }
-
-        <div class="container-fluid p-4">
-            @RenderBody()
+            <div class="flex items-center gap-2">
+                @if (User.Identity?.IsAuthenticated == true)
+                {
+                    <span class="mr-2 text-sm text-slate-300">Merhaba, @User.Identity.Name</span>
+                    <a asp-controller="Account" asp-action="Logout" class="rounded-lg border border-rose-400/60 px-3 py-2 text-sm text-rose-300 hover:bg-rose-500/10">Çıkış</a>
+                }
+                else
+                {
+                    <a asp-controller="Account" asp-action="Login" class="rounded-lg border border-slate-500 px-3 py-2 text-sm text-slate-200 hover:bg-panelSoft">Giriş Yap</a>
+                    <a asp-controller="Account" asp-action="Register" class="rounded-lg bg-accent px-3 py-2 text-sm font-semibold text-slate-900 shadow-glow hover:bg-sky-300">Üye Ol</a>
+                }
+            </div>
         </div>
+    </nav>
+
+    <div class="mx-auto max-w-7xl px-4 py-6 md:px-8">
+        @RenderBody()
     </div>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/preline@2.5.0/dist/preline.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.7/signalr.min.js"></script>
     <script>
-        $(document).ready(function () {
-            $('#sidebarCollapse').on('click', function () {
-                $('#sidebar').toggleClass('active');
-                if ($('#sidebar').hasClass('active')) {
-                    $('#content').css({ 'margin-left': 'var(--sidebar-collapsed-width)', 'width': 'calc(100% - var(--sidebar-collapsed-width))' });
-                } else {
-                    $('#content').css({ 'margin-left': 'var(--sidebar-width)', 'width': 'calc(100% - var(--sidebar-width))' });
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <text>
+            Swal.fire({
+                icon: 'success',
+                title: 'Başarılı!',
+                text: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(TempData["SuccessMessage"]?.ToString())),
+                background: '#121a2f',
+                color: '#fff',
+                confirmButtonColor: '#0ea5e9'
+            });
+            </text>
+        }
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <text>
+            Swal.fire({
+                icon: 'error',
+                title: 'Hata!',
+                text: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(TempData["ErrorMessage"]?.ToString())),
+                background: '#121a2f',
+                color: '#fff',
+                confirmButtonColor: '#0ea5e9'
+            });
+            </text>
+        }
+
+        if ('@User.Identity?.IsAuthenticated' === 'True') {
+            const connection = new signalR.HubConnectionBuilder()
+                .withUrl('/hubs/notifications')
+                .withAutomaticReconnect()
+                .build();
+
+            connection.on('Notify', function (payload) {
+                const title = payload?.title || 'Bildirim';
+                const body = payload?.body || '';
+
+                Swal.fire({
+                    icon: 'info',
+                    title: title,
+                    text: body,
+                    background: '#121a2f',
+                    color: '#fff',
+                    confirmButtonColor: '#0ea5e9'
+                });
+
+                if ('Notification' in window && Notification.permission === 'granted') {
+                    new Notification(title, { body: body });
                 }
             });
 
-            // MÜHENDİSLİK DÜZELTMESİ: Html.Raw() kullanımı ile karakter sorunu çözüldü
-            @if (TempData["SuccessMessage"] != null)
-            {
-                <text>
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Başarılı!',
-                    text: '@Html.Raw(TempData["SuccessMessage"])', 
-                    background: '#111',
-                    color: '#fff',
-                    confirmButtonColor: '#e31e24'
-                });
-                </text>
+            if ('Notification' in window && Notification.permission === 'default') {
+                Notification.requestPermission();
             }
-            @if (TempData["ErrorMessage"] != null)
-            {
-                <text>
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Hata!',
-                    text: '@Html.Raw(TempData["ErrorMessage"])',
-                    background: '#111',
-                    color: '#fff',
-                    confirmButtonColor: '#e31e24'
-                });
-                </text>
-            }
-        });
+
+            connection.start().catch(function () {
+                // Web bildirim baglantisi kurulamazsa uygulama davranisi etkilenmesin.
+            });
+        }
     </script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>

@@ -1,0 +1,10 @@
+HTTP/1.1 302 Found
+Content-Length: 0
+Date: Fri, 10 Apr 2026 14:44:24 GMT
+Server: Kestrel
+Cache-Control: no-cache,no-store
+Expires: Thu, 01 Jan 1970 00:00:00 GMT
+Location: /
+Pragma: no-cache
+Set-Cookie: AfneyGymAuthCookie=CfDJ8EQq2fm-ALtDnt4NVXI8ZE13rehnHjV6ocUh3DIg370yqSPlPxrPG9iD4GEruZeed6BROVilJuwTliGQTfPp0LNhba2DBW3RnAoZ2Q6CHL3mDjwuU1jNxQ9A_SZVwsmcT9lcxSUyZIxXXwdqOTyx8B0R7xLDbyD3mUoGgoDux3czPdTWZYWmNsiE_immaic3SO0Rpzzm9E95ZTOpGBwm8a4JtePyuQyiy1SnOAE7knGrwGMuiwlDDuwN9oWezJn6sYv2HribuRPALiR--kD448ale6ij5-FJGq3K2nRWbj272jXHRV8a1Tjnhb8JrME2qlwglZWvXeIpnUQieamS5VWcZcefq4HEpEzYvxuUUU-RJ18IDM4sQc2Q8n4wDaCioAoQ-lygXCWJX6goqxVG3oUYJ-IKFNiDWZvm6IPkqwocoK9_jiYJ_ZxsgreuLU_fxuurVYNi5skvnGQgfX877sQzx3ZKYtlcn5r9riATzXvq7Ym1ca8y7FWBSTUXZ-2T7F-vOPrpz1v6YYOqd-pXnPK2-qkSl_uo0wrGIGTrw7GH-wMxYptmknFLTLY4x4zpLqtvB1TUHpyKCe7SrWMgMEhs6slTinLx_4QXRLmEgfnxRqGUUVAwe6MxGaHNZ4fu8atnRmtZgkTVM3C28iqiA1E; expires=Fri, 24 Apr 2026 14:44:24 GMT; path=/; samesite=lax; httponly
+
